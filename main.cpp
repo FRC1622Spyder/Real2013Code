@@ -17,8 +17,11 @@ class RobotMain : public IterativeRobot
 		{
 			std::fstream file;
 			file.open("config.cfg", std::ios_base::in);
-			Spyder::ConfigVarBase::ReadConfigFile(file);
-			file.close();
+			if(file.is_open())
+			{
+				Spyder::ConfigVarBase::ReadConfigFile(file);
+				file.close();
+			}
 			
 			this->SetPeriod(0.0);
 			std::vector<Spyder::Subsystem*> subsystems = Spyder::SubsystemMgr::GetSingleton()->GetSubsystems();
