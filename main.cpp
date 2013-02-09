@@ -1,5 +1,7 @@
 #include <WPILib.h>
 #include "Subsystem.h"
+#include <fstream>
+#include "Config.h"
 
 
 class RobotMain : public IterativeRobot
@@ -13,6 +15,11 @@ class RobotMain : public IterativeRobot
 		
 		virtual void RobotInit()
 		{
+			std::fstream file;
+			file.open("config.cfg", std::ios_base::in);
+			Spyder::ConfigVarBase::ReadConfigFile(file);
+			file.close();
+			
 			this->SetPeriod(0.0);
 			std::vector<Spyder::Subsystem*> subsystems = Spyder::SubsystemMgr::GetSingleton()->GetSubsystems();
 			for(size_t i = 0; i < subsystems.size(); ++i)

@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <hash_map>
 namespace Spyder
 {
 	class ConfigVarBase
@@ -10,8 +9,6 @@ namespace Spyder
 		public:
 			static void ReadConfigFile(std::istream &file);
 	};
-
-	std::hash_map<std::string, ConfigVarBase*> cfgvar_map;
 	
 	template <class T>
 	class ConfigVar : ConfigVarBase

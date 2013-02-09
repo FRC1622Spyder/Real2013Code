@@ -1,4 +1,7 @@
 #include "Config.h"
+#include <hash_map>
+
+std::hash_map<std::string, Spyder::ConfigVarBase*> cfgvar_map;
 
 namespace Spyder
 {
