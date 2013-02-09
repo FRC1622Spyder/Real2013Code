@@ -5,7 +5,7 @@
 class RobotMain : public IterativeRobot
 {
 	private:
-		
+		unsigned int usPeriodCounter;
 	public:
 		virtual void StartCompetition()
 		{
@@ -62,8 +62,12 @@ class RobotMain : public IterativeRobot
 			std::vector<Spyder::Subsystem*> subsystems = Spyder::SubsystemMgr::GetSingleton()->GetSubsystems();
 			for(size_t i = 0; i < subsystems.size(); ++i)
 			{
-				subsystems[i]->Periodic(Spyder::M_DISABLED);
+				if(usPeriodCounter % subsystems[i]->GetPeriod() == 0)
+				{
+					subsystems[i]->Periodic(Spyder::M_DISABLED);
+				}
 			}
+			++usPeriodCounter;
 		}
 		
 		virtual void AutonomousPeriodic()
@@ -71,8 +75,12 @@ class RobotMain : public IterativeRobot
 			std::vector<Spyder::Subsystem*> subsystems = Spyder::SubsystemMgr::GetSingleton()->GetSubsystems();
 			for(size_t i = 0; i < subsystems.size(); ++i)
 			{
-				subsystems[i]->Periodic(Spyder::M_AUTO);
+				if(usPeriodCounter % subsystems[i]->GetPeriod() == 0)
+				{
+					subsystems[i]->Periodic(Spyder::M_AUTO);
+				}
 			}
+			++usPeriodCounter;
 		}
 		
 		virtual void TeleopPeriodic()
@@ -80,8 +88,12 @@ class RobotMain : public IterativeRobot
 			std::vector<Spyder::Subsystem*> subsystems = Spyder::SubsystemMgr::GetSingleton()->GetSubsystems();
 			for(size_t i = 0; i < subsystems.size(); ++i)
 			{
-				subsystems[i]->Periodic(Spyder::M_TELEOP);
+				if(usPeriodCounter % subsystems[i]->GetPeriod() == 0)
+				{
+					subsystems[i]->Periodic(Spyder::M_TELEOP);
+				}
 			}
+			++usPeriodCounter;
 		}
 		
 		virtual void TestPeriodic()
@@ -89,8 +101,12 @@ class RobotMain : public IterativeRobot
 			std::vector<Spyder::Subsystem*> subsystems = Spyder::SubsystemMgr::GetSingleton()->GetSubsystems();
 			for(size_t i = 0; i < subsystems.size(); ++i)
 			{
-				subsystems[i]->Periodic(Spyder::M_TEST);
+				if(usPeriodCounter % subsystems[i]->GetPeriod() == 0)
+				{
+					subsystems[i]->Periodic(Spyder::M_TEST);
+				}
 			}
+			++usPeriodCounter;
 		}
 		
 		virtual ~RobotMain()
