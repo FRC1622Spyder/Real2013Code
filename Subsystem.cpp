@@ -15,8 +15,17 @@ namespace Spyder
 		m_nameToSubsys[strName] = ptr;
 	};
 	
+	std::vector<Subsystem*>& SubsystemMgr::GetSubsystems()
+	{
+		return m_subsystems;
+	}
+	
 	Subsystem::Subsystem(const std::string &strName) : m_strName(strName), m_usPeriod(1)
 	{
 		SubsystemMgr::GetSingleton()->RegisterSubsystem(strName, this);
+	}
+	
+	Subsystem::~Subsystem()
+	{
 	}
 };

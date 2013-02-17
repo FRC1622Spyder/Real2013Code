@@ -1,4 +1,5 @@
 #include "WPIObjMgr.h"
+#include "Config.h"
 
 
 namespace Spyder
@@ -21,5 +22,11 @@ namespace Spyder
 			s_victors[channel] = new Victor(1, channel);
 		}
 		return s_victors[channel];
+	}
+	
+	double GetDeadzone()
+	{
+		static ConfigVar<double> deadzone("controller_deadzone", 0.15);
+		return deadzone.GetVal();
 	}
 }

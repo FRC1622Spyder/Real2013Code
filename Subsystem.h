@@ -35,8 +35,15 @@ namespace Spyder
 			virtual void Init(RunModes runmode) = 0;
 			virtual void Periodic(RunModes runmode) = 0;
 			virtual void RobotInit() = 0;
-			unsigned short GetPeriod();
-			void SetPeriod(unsigned short usPeriod);
+			inline unsigned short GetPeriod()
+			{
+				return m_usPeriod;
+			}
+			
+			inline void SetPeriod(unsigned short usPeriod)
+			{
+				m_usPeriod = usPeriod;
+			}
 		private:
 			std::string m_strName;
 			unsigned short m_usPeriod;

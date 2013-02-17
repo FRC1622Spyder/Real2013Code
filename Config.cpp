@@ -1,5 +1,6 @@
 #include "Config.h"
 #include <hash_map>
+#include <sstream>
 
 std::hash_map<std::string, Spyder::ConfigVarBase*> cfgvar_map;
 
@@ -23,16 +24,57 @@ namespace Spyder
 		}
 	}
 	
-	template <class T>
-	ConfigVar<T>::ConfigVar(std::string strName, T default_val): m_val(default_val)
+	ConfigVarBase::ConfigVarBase(const std::string &strName)
 	{
 		cfgvar_map[strName] = this;
 	}
 	
 	template <class T>
-	void ConfigVar<T>::ReadVar(const std::string &dat)
+	ConfigVar<T>::ConfigVar(const std::string &strName, T default_val) : ConfigVarBase(strName),
+		m_val(default_val)
+	{
+	}
+	
+	template <class T>
+	void ConfigVar<T>::ReadVar(std::string &dat)
 	{
 		std::stringstream ss(dat);
 		ss >> m_val;
+	}
+	
+	TwoIntConfig::TwoIntConfig(const std::string &strName, int val1, int val2)
+		: ConfigVarBase(strName), m_val1(val1), m_val2(val2)
+	{
+	}
+	
+	void TwoIntConfig::ReadVar(std::string &dat)
+	{
+		std::stringstream var1;
+		std::stringstream var2;
+		size_t pSemicolon = dat.find(':');
+		var1 << dat.substr(0, pSemicolon);
+		var2 << dat.substr(pSemicolon+1, dat.size()-pSemicolon-1);
+		
+		var1.seekg(std::ios_base::beg);
+		var2.seekg(std::ios_base::beg);
+		
+		var1 >> m_val1;
+		var2 >> m_val2;
+	}
+	
+	int TwoIntConfig::GetVar(const unsigned char val)
+	{
+		switch(val)
+		{
+			case 1:
+				return m_val1;
+				break;
+			case 2:
+				return m_val2;
+				break;
+			default:
+				return -1;
+				break;
+		}
 	}
 }

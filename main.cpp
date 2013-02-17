@@ -1,4 +1,4 @@
-#include <WPILib.h>
+#include "WPILib.h"
 #include "Subsystem.h"
 #include <fstream>
 #include "Config.h"
@@ -9,10 +9,6 @@ class RobotMain : public IterativeRobot
 	private:
 		unsigned int usPeriodCounter;
 	public:
-		virtual void StartCompetition()
-		{
-		}
-		
 		virtual void RobotInit()
 		{
 			std::fstream file;
@@ -123,7 +119,7 @@ class RobotMain : public IterativeRobot
 		{
 		}
 		
-		RobotMain()
+		RobotMain() : IterativeRobot()
 		{
 		}
 };
