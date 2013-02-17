@@ -9,8 +9,8 @@ Spyder::TwoIntConfig rightJoystick("bind_rightDrive", 2, 1);
 Spyder::ConfigVar<UINT32> leftMotor("leftDriveMotor", 2);
 Spyder::ConfigVar<UINT32> rightMotor("rightDriveMotor", 1);
 
-Syder::ConfigVar<bool> leftMotorInv("leftDriveInverted", false);
-Syder::ConfigVar<bool> rightMotorInv("rightDriveInverted", false);
+Spyder::ConfigVar<bool> leftMotorInv("leftDriveInverted", false);
+Spyder::ConfigVar<bool> rightMotorInv("rightDriveInverted", false);
 
 class Drive : public Spyder::Subsystem
 {
