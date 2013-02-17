@@ -8,10 +8,19 @@ class Turret : public Spyder::Subsystem
 		Spyder::ConfigVar<UINT32> frontMotor;
 		Spyder::ConfigVar<UINT32> backMotor;
 		
-		Spyder::TwoIntConfig leftJoystick;
+		Spyder::TwoIntConfig turretJoystick;
+		
+		Spyder::ConfigVar<float> inputMul;
+		
+		float speed;
+		
+		Spyder::ConfigVar<bool> frontInv;
+		Spyder::ConfigVar<bool> backInv;
 	public:
 		Turret() : Spyder::Subsystem("Turret"), frontMotor("frontTurretMotor", 0),
-			backMotor("backTurretMotor", 0), leftJoystick("bind_turretSpeed", 3, 1)
+			backMotor("backTurretMotor", 0), leftJoystick("bind_turretSpeed", 3, 1),
+			inputMul("turretInputMul", 0.1), speed(0.f), frontInv("frontTurretMotorInveted", false),
+			backInv("backTurretMotorInveted", false)
 		{
 		}
 		
@@ -29,9 +38,33 @@ class Turret : public Spyder::Subsystem
 		{
 			switch(runmode)
 			{
-				case Spyder::M_TELEOP:
+				case Spyder::M_TELEOP:	
+					Joystick *joystick = Spyder::GetJoystick(turretJoystick.GetVar(1));
+					float val = joystick->GetRawAxis(turretJoystick.GetVar(2)) * inputMul.GetVal();
+					speed += val;
+					speed = (speed > 1.f) ? 1.f : speed;
+					
 					Spyder::GetVictor(frontMotor.GetVal())->Set(0);
 					Spyder::GetVictor(backMotor.GetVal())->Set(0);
+					
+					if(frontInv.GetVal())
+					{
+						Spyder::GetVictor(frontMotor.GetVal())->Set(speed * -1.f);
+					}
+					else
+					{
+						Spyder::GetVictor(frontMotor.GetVal())->Set(speed);
+					}
+					
+					if(backInv.GetVal())
+					{
+						Spyder::GetVictor(backMotor.GetVal())->Set(speed * -1.f);
+					}
+					else
+					{
+						Spyder::GetVictor(backMotor.GetVal())->Set(speed);
+					}
+						
 					break;
 				default:
 					Spyder::GetVictor(frontMotor.GetVal())->Set(0);
