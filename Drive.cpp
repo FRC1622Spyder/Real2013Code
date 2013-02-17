@@ -6,8 +6,11 @@
 Spyder::TwoIntConfig leftJoystick("bind_leftDrive", 1, 1);
 Spyder::TwoIntConfig rightJoystick("bind_rightDrive", 2, 1);
 
-Spyder::ConfigVar<UINT32> leftMotor("leftMotor", 2);
-Spyder::ConfigVar<UINT32> rightMotor("rightMotor", 1);
+Spyder::ConfigVar<UINT32> leftMotor("leftDriveMotor", 2);
+Spyder::ConfigVar<UINT32> rightMotor("rightDriveMotor", 1);
+
+Syder::ConfigVar<bool> leftMotorInv("leftDriveInverted", false);
+Syder::ConfigVar<bool> rightMotorInv("rightDriveInverted", false);
 
 class Drive : public Spyder::Subsystem
 {
@@ -38,8 +41,16 @@ class Drive : public Spyder::Subsystem
 					float left = leftJoy->GetRawAxis(leftJoystick.GetVar(2));
 					float right = rightJoy->GetRawAxis(rightJoystick.GetVar(2));
 					left = fabs(left) > Spyder::GetDeadzone() ? left : 0;
-					left = left * -1;
 					right = fabs(right) > Spyder::GetDeadzone() ? right : 0;
+					
+					if(leftMotorInv.GetVal())
+					{
+						left *= -1;
+					}
+					if(rightMotorInv.GetVal())
+					{
+						right *= -1;
+					}
 					
 					Spyder::GetVictor(leftMotor.GetVal())->Set(left);
 					Spyder::GetVictor(rightMotor.GetVal())->Set(right);
