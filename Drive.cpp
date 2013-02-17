@@ -3,19 +3,22 @@
 #include "Config.h"
 #include <math.h>
 
-Spyder::TwoIntConfig leftJoystick("bind_leftDrive", 1, 1);
-Spyder::TwoIntConfig rightJoystick("bind_rightDrive", 2, 1);
-
-Spyder::ConfigVar<UINT32> leftMotor("leftDriveMotor", 2);
-Spyder::ConfigVar<UINT32> rightMotor("rightDriveMotor", 1);
-
-Spyder::ConfigVar<bool> leftMotorInv("leftDriveInverted", false);
-Spyder::ConfigVar<bool> rightMotorInv("rightDriveInverted", false);
-
 class Drive : public Spyder::Subsystem
 {
+	private:
+		Spyder::TwoIntConfig leftJoystick;
+		Spyder::TwoIntConfig rightJoystick;
+		
+		Spyder::ConfigVar<UINT32> leftMotor;
+		Spyder::ConfigVar<UINT32> rightMotor;
+		
+		Spyder::ConfigVar<bool> leftMotorInv;
+		Spyder::ConfigVar<bool> rightMotorInv;
 	public:
-		Drive() : Spyder::Subsystem("Drive")
+		Drive() : Spyder::Subsystem("Drive"), leftJoystick("bind_leftDrive", 1, 1),
+			rightJoystick("bind_rightDrive", 2, 1), leftMotor("leftDriveMotor", 2),
+			rightMotor("rightDriveMotor", 1), leftMotorInv("leftDriveInverted", false),
+			rightMotorInv("rightDriveInverted", false)
 		{
 		}
 		

@@ -2,15 +2,16 @@
 #include "WPIObjMgr.h"
 #include "Config.h"
 
-Spyder::ConfigVar<UINT32> frontMotor("frontTurretMotor", 0);
-Spyder::ConfigVar<UINT32> backMotor("backTurretMotor", 0);
-
-Spyder::TwoIntConfig leftJoystick("bind_turretSpeed", 3, 1);
-
 class Turret : public Spyder::Subsystem
 {
+	private:
+		Spyder::ConfigVar<UINT32> frontMotor;
+		Spyder::ConfigVar<UINT32> backMotor;
+		
+		Spyder::TwoIntConfig leftJoystick;
 	public:
-		Turret() : Spyder::Subsystem("Turret")
+		Turret() : Spyder::Subsystem("Turret"), frontMotor("frontTurretMotor", 0),
+			backMotor("backTurretMotor", 0), leftJoystick("bind_turretSpeed", 3, 1)
 		{
 		}
 		
