@@ -14,11 +14,13 @@ class Drive : public Spyder::Subsystem
 		
 		Spyder::ConfigVar<bool> leftMotorInv;
 		Spyder::ConfigVar<bool> rightMotorInv;
+		
+		Spyder::TwoIntConfig halfSpeed;
 	public:
 		Drive() : Spyder::Subsystem("Drive"), leftJoystick("bind_leftDrive", 1, 2),
 			rightJoystick("bind_rightDrive", 2, 2), leftMotor("leftDriveMotor", 2),
 			rightMotor("rightDriveMotor", 1), leftMotorInv("leftDriveInverted", true),
-			rightMotorInv("rightDriveInverted", false)
+			rightMotorInv("rightDriveInverted", false), halfSpeed("bind_halfSpeedDrive", 1, 1)
 		{
 		}
 		
@@ -52,7 +54,13 @@ class Drive : public Spyder::Subsystem
 					}
 					if(rightMotorInv.GetVal())
 					{
-						right *= -1;
+						right*= -1;
+					}
+					
+					if(Spyder::GetJoystick(halfSpeed.GetVar(1))->GetRawButton(halfSpeed.GetVar(2)))
+					{
+						left /= 2.f;
+						right /= 2.f;
 					}
 					
 					Spyder::GetVictor(leftMotor.GetVal())->Set(left);
