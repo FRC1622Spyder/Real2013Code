@@ -1,6 +1,7 @@
 #include "Subsystem.h"
 #include "WPIObjMgr.h"
 #include "Config.h"
+#include <math.h>
 
 class Turret : public Spyder::Subsystem
 {
@@ -41,6 +42,7 @@ class Turret : public Spyder::Subsystem
 				case Spyder::M_TELEOP:	
 					Joystick *joystick = Spyder::GetJoystick(turretJoystick.GetVar(1));
 					float val = joystick->GetRawAxis(turretJoystick.GetVar(2)) * inputMul.GetVal();
+					val = fabs(val) > Spyder::GetDeadzone() ? val : 0;
 					speed += val;
 					speed = (speed > 1.f) ? 1.f : speed;
 					
