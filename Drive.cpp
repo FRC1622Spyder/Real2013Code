@@ -2,6 +2,7 @@
 #include "WPIObjMgr.h"
 #include "Config.h"
 #include <math.h>
+#include <iostream>
 
 class Drive : public Spyder::Subsystem
 {
@@ -20,12 +21,15 @@ class Drive : public Spyder::Subsystem
 		bool reversed;
 		bool lastRevBtnVal;
 		Spyder::TwoIntConfig reverseBtn;
+		
+		Spyder::ConfigVar<float> curvature;
 	public:
 		Drive() : Spyder::Subsystem("Drive"), leftJoystick("bind_leftDrive", 1, 2),
 			rightJoystick("bind_rightDrive", 2, 2), leftMotor("leftDriveMotor", 2),
 			rightMotor("rightDriveMotor", 1), leftMotorInv("leftDriveInverted", true),
 			rightMotorInv("rightDriveInverted", false), halfSpeed("bind_halfSpeedDrive", 1, 1),
-			reversed(false), lastRevBtnVal(false), reverseBtn("bind_driveReverse", 2, 3)
+			reversed(false), lastRevBtnVal(false), reverseBtn("bind_driveReverse", 2, 3),
+			curvature("drive_controlCurvature", 0.351563f)
 		{
 		}
 		
@@ -53,6 +57,10 @@ class Drive : public Spyder::Subsystem
 					left = fabs(left) > Spyder::GetDeadzone() ? left : 0;
 					right = fabs(right) > Spyder::GetDeadzone() ? right : 0;
 					
+					float curve = curvature.GetVal();
+					left = ((left*left*left)*curve) + (left*(1.f-curve));
+					right = ((right*right*right)*curve) + (right*(1.f-curve));
+					
 					if(leftMotorInv.GetVal())
 					{
 						left *= -1;
@@ -73,19 +81,13 @@ class Drive : public Spyder::Subsystem
 						lastRevBtnVal = true;
 						reversed = !reversed;
 					}
-					else
-					{
-						lastRevBtnVal = false;
-					}
+					lastRevBtnVal = Spyder::GetJoystick(reverseBtn.GetVar(1))->GetRawButton(reverseBtn.GetVar(2));
 					
 					if(reversed)
 					{
 						float temp = left;
 						left = right;
 						right = temp;
-						
-						left *= -1;
-						right *= -1;
 					}
 					
 					Spyder::GetVictor(leftMotor.GetVal())->Set(left);
