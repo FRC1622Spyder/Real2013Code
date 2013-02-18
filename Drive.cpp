@@ -15,9 +15,9 @@ class Drive : public Spyder::Subsystem
 		Spyder::ConfigVar<bool> leftMotorInv;
 		Spyder::ConfigVar<bool> rightMotorInv;
 	public:
-		Drive() : Spyder::Subsystem("Drive"), leftJoystick("bind_leftDrive", 1, 1),
-			rightJoystick("bind_rightDrive", 2, 1), leftMotor("leftDriveMotor", 2),
-			rightMotor("rightDriveMotor", 1), leftMotorInv("leftDriveInverted", false),
+		Drive() : Spyder::Subsystem("Drive"), leftJoystick("bind_leftDrive", 1, 2),
+			rightJoystick("bind_rightDrive", 2, 2), leftMotor("leftDriveMotor", 2),
+			rightMotor("rightDriveMotor", 1), leftMotorInv("leftDriveInverted", true),
 			rightMotorInv("rightDriveInverted", false)
 		{
 		}

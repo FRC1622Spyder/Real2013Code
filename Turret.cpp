@@ -17,8 +17,8 @@ class Turret : public Spyder::Subsystem
 		Spyder::ConfigVar<bool> frontInv;
 		Spyder::ConfigVar<bool> backInv;
 	public:
-		Turret() : Spyder::Subsystem("Turret"), frontMotor("frontTurretMotor", 0),
-			backMotor("backTurretMotor", 0), leftJoystick("bind_turretSpeed", 3, 1),
+		Turret() : Spyder::Subsystem("Turret"), frontMotor("frontTurretMotor", 4),
+			backMotor("backTurretMotor", 3), turretJoystick("bind_turretSpeed", 3, 1),
 			inputMul("turretInputMul", 0.1), speed(0.f), frontInv("frontTurretMotorInveted", false),
 			backInv("backTurretMotorInveted", false)
 		{

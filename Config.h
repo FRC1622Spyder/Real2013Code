@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <sstream>
 namespace Spyder
 {
 	class ConfigVarBase
@@ -17,14 +18,21 @@ namespace Spyder
 		private:
 			T m_val;
 		public:
-			ConfigVar(const std::string &strName, T default_val);
+			ConfigVar(const std::string &strName, T default_val) : ConfigVarBase(strName),
+				m_val(default_val)
+			{
+			}
 	
 			inline T GetVal()
 			{
 				return m_val;
 			}
 		protected:
-			virtual void ReadVar(std::string &dat);
+			virtual void ReadVar(std::string &dat)
+			{
+				std::stringstream ss(dat);
+				ss >> m_val;
+			}
 	};
 	
 	class TwoIntConfig : ConfigVarBase

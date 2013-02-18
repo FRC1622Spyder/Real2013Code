@@ -29,19 +29,6 @@ namespace Spyder
 		cfgvar_map[strName] = this;
 	}
 	
-	template <class T>
-	ConfigVar<T>::ConfigVar(const std::string &strName, T default_val) : ConfigVarBase(strName),
-		m_val(default_val)
-	{
-	}
-	
-	template <class T>
-	void ConfigVar<T>::ReadVar(std::string &dat)
-	{
-		std::stringstream ss(dat);
-		ss >> m_val;
-	}
-	
 	TwoIntConfig::TwoIntConfig(const std::string &strName, int val1, int val2)
 		: ConfigVarBase(strName), m_val1(val1), m_val2(val2)
 	{
