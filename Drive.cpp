@@ -16,11 +16,16 @@ class Drive : public Spyder::Subsystem
 		Spyder::ConfigVar<bool> rightMotorInv;
 		
 		Spyder::TwoIntConfig halfSpeed;
+		
+		bool reversed;
+		bool lastRevBtnVal;
+		Spyder::TwoIntConfig reverseBtn;
 	public:
 		Drive() : Spyder::Subsystem("Drive"), leftJoystick("bind_leftDrive", 1, 2),
 			rightJoystick("bind_rightDrive", 2, 2), leftMotor("leftDriveMotor", 2),
 			rightMotor("rightDriveMotor", 1), leftMotorInv("leftDriveInverted", true),
-			rightMotorInv("rightDriveInverted", false), halfSpeed("bind_halfSpeedDrive", 1, 1)
+			rightMotorInv("rightDriveInverted", false), halfSpeed("bind_halfSpeedDrive", 1, 1),
+			reversed(false), lastRevBtnVal(false), reverseBtn("bind_driveReverse", 2, 3)
 		{
 		}
 		
@@ -61,6 +66,26 @@ class Drive : public Spyder::Subsystem
 					{
 						left /= 2.f;
 						right /= 2.f;
+					}
+					
+					if(Spyder::GetJoystick(reverseBtn.GetVar(1))->GetRawButton(reverseBtn.GetVar(2)) && !lastRevBtnVal)
+					{
+						lastRevBtnVal = true;
+						reversed = !reversed;
+					}
+					else
+					{
+						lastRevBtnVal = false;
+					}
+					
+					if(reversed)
+					{
+						float temp = left;
+						left = right;
+						right = temp;
+						
+						left *= -1;
+						right *= -1;
 					}
 					
 					Spyder::GetVictor(leftMotor.GetVal())->Set(left);
