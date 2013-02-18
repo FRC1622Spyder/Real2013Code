@@ -28,7 +28,7 @@ class Turret : public Spyder::Subsystem
 			backMotor("backTurretMotor", 3), turretJoystick("bind_turretSpeed", 3, 1),
 			inputMul("turretInputMul", 0.1), speed(0.f), frontInv("frontTurretMotorInveted", false),
 			backInv("backTurretMotorInveted", false), turretUp("bind_turretUp", 3, 6),
-			turretDown("bind_turretDown", 3, 8), angMotor("turret_inputMotor", 5),
+			turretDown("bind_turretDown", 3, 8), angMotor("turret_angMotor", 5),
 			angSpeed("turret_angSpeed", 0.1)
 		{
 		}
