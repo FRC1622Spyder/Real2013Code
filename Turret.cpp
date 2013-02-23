@@ -24,7 +24,8 @@ class Turret : public Spyder::Subsystem
 		Spyder::ConfigVar<UINT32> angMotor;
 		Spyder::ConfigVar<float> angSpeed;
 		
-		Spyder::ConfigVar<UINT32> pistonSolenoid;
+		Spyder::ConfigVar<UINT32> pistonSolenoidExt;
+		Spyder::ConfigVar<UINT32> pistonSolenoidRet;
 		Spyder::TwoIntConfig fireButton;
 	public:
 		Turret() : Spyder::Subsystem("Turret"), frontMotor("frontTurretMotor", 4),
@@ -32,7 +33,8 @@ class Turret : public Spyder::Subsystem
 			inputMul("turretInputMul", 0.1), speed(0.f), frontInv("frontTurretMotorInveted", false),
 			backInv("backTurretMotorInveted", false), turretUp("bind_turretUp", 3, 6),
 			turretDown("bind_turretDown", 3, 8), angMotor("turret_angMotor", 5),
-			angSpeed("turret_angSpeed", 0.1), pistonSolenoid("turret_pistonSolenoid", 1),
+			angSpeed("turret_angSpeed", 0.1), pistonSolenoidExt("turret_pistonSolenoidExt", 1),
+			pistonSolenoidRet("turret_pistonSolenoidRet", 2),
 			fireButton("bind_turretFire", 3, 2)
 		{
 		}
@@ -94,17 +96,21 @@ class Turret : public Spyder::Subsystem
 					
 					if(Spyder::GetJoystick(fireButton.GetVar(1))->GetRawButton(fireButton.GetVar(2)))
 					{
-						Spyder::GetSolenoid(pistonSolenoid.GetVal())->Set(true);
+						Spyder::GetSolenoid(pistonSolenoidExt.GetVal())->Set(true);
+						Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(false);
 					}
 					else
 					{
-						Spyder::GetSolenoid(pistonSolenoid.GetVal())->Set(false);
+						Spyder::GetSolenoid(pistonSolenoidExt.GetVal())->Set(false);
+						Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(true);
 					}
 						
 					break;
 				default:
 					Spyder::GetVictor(frontMotor.GetVal())->Set(0);
 					Spyder::GetVictor(backMotor.GetVal())->Set(0);
+					Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(true);
+					Spyder::GetSolenoid(pistonSolenoidExt.GetVal())->Set(false);
 			}
 		}
 		
