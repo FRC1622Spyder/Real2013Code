@@ -38,7 +38,7 @@ namespace Spyder
 	{
 		std::stringstream var1;
 		std::stringstream var2;
-		size_t pSemicolon = dat.find(':');
+		size_t pSemicolon = dat.find(';');
 		var1 << dat.substr(0, pSemicolon);
 		var2 << dat.substr(pSemicolon+1, dat.size()-pSemicolon-1);
 		
