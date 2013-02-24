@@ -2,13 +2,14 @@
 #include <hash_map>
 #include <sstream>
 #include <iostream>
-
+#include <ostream>
 std::hash_map<std::string, Spyder::ConfigVarBase*> cfgvar_map;
 
 namespace Spyder
 {
 	void ConfigVarBase::ReadConfigFile(std::istream &file)
 	{
+		
 		std::string strLine;
 		while(!file.eof())
 		{
@@ -29,9 +30,17 @@ namespace Spyder
 		}
 	}
 	
-	ConfigVarBase::ConfigVarBase(const std::string &strName)
+	ConfigVarBase::ConfigVarBase(const std::string &strName) 
 	{
-		cfgvar_map[strName] = this;
+		ofstream log ("Config.log");
+		if(cfgvar_map.find(strName)!=cfgvar_map.end())
+		{
+			std::cout << "Key '" << strName << "' was requested but not found." << std::endl;
+			log << strName << "=" << std::endl;
+		} else {
+			cfgvar_map[strName] = this;
+		}
+		log.close();
 	}
 	
 	TwoIntConfig::TwoIntConfig(const std::string &strName, int val1, int val2)

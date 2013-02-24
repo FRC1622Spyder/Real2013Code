@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <sstream>
+#include <fstream>
 namespace Spyder
 {
 	class ConfigVarBase
@@ -17,6 +18,7 @@ namespace Spyder
 	{
 		private:
 			T m_val;
+			
 		public:
 			ConfigVar(const std::string &strName, T default_val) : ConfigVarBase(strName),
 				m_val(default_val)
