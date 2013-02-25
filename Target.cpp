@@ -21,9 +21,35 @@ public:
 		RGBImage *image = new RGBImage("init.png"); 
 		
 		}
+	virtual ~Target()
+	{
+	}
+	
+	virtual void Init()
+	{
+	}
+	
+	virtual void Periodic(Spyder::RunModes runmode)
+		{
+			switch(runmode)
+			{
+			case Spyder::M_DISABLED:
+				//do something
+				break;
+			case Spyder::M_TELEOP:
+				//do something
+				break;
+			case Spyder::M_AUTO:
+				//do something
+				break;
+			default:
+				//do something
+			}
+		}
 
 	virtual void RobotInit()
 	{
 	}
+	
 };
-
+Target target;
