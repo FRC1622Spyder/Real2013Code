@@ -10,14 +10,15 @@ class Target : public Spyder::Subsystem
 {
 	float relX;
 	float relY;
+	time_t lastImage;
 	
-	//AxisCamera &camera;
 	RGBImage *image;
 	
 public:
 	Target() : Spyder::Subsystem("Target")
 		{
-		AxisCamera &camera = AxisCamera::GetInstance("10.16.22.11");
+
+		
 		RGBImage *image = new RGBImage("init.png"); 
 		
 		}
@@ -25,11 +26,12 @@ public:
 	{
 	}
 	
-	virtual void Init()
+	 void Init(Spyder::RunModes runmode)
 	{
+		
 	}
 	
-	virtual void Periodic(Spyder::RunModes runmode)
+	void Periodic(Spyder::RunModes runmode)
 		{
 			switch(runmode)
 			{
@@ -37,17 +39,18 @@ public:
 				//do something
 				break;
 			case Spyder::M_TELEOP:
-				//do something
+				
 				break;
 			case Spyder::M_AUTO:
 				//do something
 				break;
 			default:
+				std::cout << "oops" << std::endl;
 				//do something
 			}
 		}
 
-	virtual void RobotInit()
+	void RobotInit()
 	{
 	}
 	
