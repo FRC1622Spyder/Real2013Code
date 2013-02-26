@@ -114,26 +114,26 @@ public:
 	}
 	~ImageGrabber();
 	RGBImage GetImage();
-	char *GetRawImgae();
+	char *GetRawImage();
 
 };
-char * ImageGrabber::GetRawImgage() { //TODO: check pointers
-	&writeMutex = true; //take lock
+char * ImageGrabber::GetRawImage() { //TODO: check pointers
+	*writeMutex = true; //take lock
 	if (&readMutex == false) { //true means lock
-		char buf[sizeof(sharedImgBuff)];
+		char *buf[sizeof(sharedImgBuff)];
 		memcpy(buf, sharedImgBuff, sizeof(sharedImgBuff));
-		&writeMutex = false; // release lock
+		*writeMutex = false; // release lock
 		return *buf;
 	} else {
-		return -1; //other process is busy, try again.
+		//other process is busy, try again.
 	}
 }
 
-int ImageGrabber::ReadImagesFromCamera(UINT32 readMutex, UINT32 writeMutex,
-		UINT32 sharedMem) {
-	reinterpret_cast<bool> (readMutex);
-	reinterpret_cast<bool> (writeMutex);
-	reinterpret_cast<char*> (sharedMem);
+int ImageGrabber::ReadImagesFromCamera(UINT32 readMutex_, UINT32 writeMutex_,
+		UINT32 sharedMem_) {
+	bool* readMutex = reinterpret_cast<bool*> (readMutex_);
+	bool* writeMutex = reinterpret_cast<bool*> (writeMutex_);
+	char* sharedMem = reinterpret_cast<char*> (sharedMem_);
 	char *imgBuffer = NULL;
 	int imgBufferLength = 0;
 	//Infinite loop, task deletion handled by taskDeleteHook
@@ -200,9 +200,9 @@ int ImageGrabber::ReadImagesFromCamera(UINT32 readMutex, UINT32 writeMutex,
 		}
 		// Update image
 		if (&readMutex == false) { //TODO: check pointers 
-			&writeMutex = true; //take lock
+			*writeMutex = true; //take lock
 			memcpy(&sharedMem, &imgBuffer, sizeof(&imgBuffer));
-			&writeMutex = false; //release lock
+			*writeMutex = false; //release lock
 		}
 	}
 }
