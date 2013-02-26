@@ -57,9 +57,9 @@ class ImageGrabber {
 		} else {
 			//TODO: set period to normal length
 			//risky much?
-			recvTask->Start(reinterpret_cast<UINT32> (readMutex),
-					reinterpret_cast<UINT32> (writeMutex),
-					reinterpret_cast<UINT32> (sharedImgBuff));
+			recvTask->Start(static_cast<UINT32> (readMutex),
+					static_cast<UINT32> (writeMutex),
+					static_cast<UINT32> (sharedImgBuff));
 			//ReadImagesFromCamera();
 		}
 
@@ -107,9 +107,9 @@ public:
 		recvTask = new Task(
 				"recvTask",
 				(FUNCPTR) this->ReadImagesFromCamera(
-						reinterpret_cast<UINT32> (readMutex),
-						reinterpret_cast<UINT32> (writeMutex),
-						reinterpret_cast<UINT32> (sharedImgBuff)));
+						static_cast<UINT32> (readMutex),
+						static_cast<UINT32> (writeMutex),
+						static_cast<UINT32> (sharedImgBuff)));
 
 	}
 	~ImageGrabber();
@@ -131,9 +131,9 @@ char * ImageGrabber::GetRawImage() { //TODO: check pointers
 
 int ImageGrabber::ReadImagesFromCamera(UINT32 readMutex_, UINT32 writeMutex_,
 		UINT32 sharedMem_) {
-	bool* readMutex = reinterpret_cast<bool*> (readMutex_);
-	bool* writeMutex = reinterpret_cast<bool*> (writeMutex_);
-	char* sharedMem = reinterpret_cast<char*> (sharedMem_);
+	bool* readMutex = static_cast<bool*> (readMutex_);
+	bool* writeMutex = static_cast<bool*> (writeMutex_);
+	char* sharedMem = static_cast<char*> (sharedMem_);
 	char *imgBuffer = NULL;
 	int imgBufferLength = 0;
 	//Infinite loop, task deletion handled by taskDeleteHook
