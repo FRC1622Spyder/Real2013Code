@@ -23,7 +23,10 @@ char buf[4096];
  * AxisCamera class 
  */
 class ImageGrabber {
+	
+	STATUS namedVxPipe;
 	Task *recvTask;
+	int pipeFd;
 
 	UINT32 m_ipAddress;
 	const char *requestString;
@@ -110,23 +113,30 @@ public:
 						static_cast<UINT32> (readMutex),
 						static_cast<UINT32> (writeMutex),
 						static_cast<UINT32> (sharedImgBuff)));
+		namedVxPipe = pipeDevCreate("/pipe/image", 60, 1024);
+		pipeFd = open("/pipe/image", O_RDWR, 0);
 
 	}
-	~ImageGrabber();
+	~ImageGrabber(){
+		close(pipeFd);
+	}
 	RGBImage GetImage();
 	char *GetRawImage();
 
 };
 char * ImageGrabber::GetRawImage() { //TODO: check pointers
-	*writeMutex = true; //take lock
-	if (&readMutex == false) { //true means lock
-		char *buf[sizeof(sharedImgBuff)];
-		memcpy(buf, sharedImgBuff, sizeof(sharedImgBuff));
-		*writeMutex = false; // release lock
-		return *buf;
-	} else {
+	char* buf;
+	read(pipeFd, buf, 1024);
+	return buf;
+	//*writeMutex = true; //take lock
+	//if (&readMutex == false) { //true means lock
+	//	char *buf[sizeof(sharedImgBuff)];
+	//	memcpy(buf, sharedImgBuff, sizeof(sharedImgBuff));
+	//	*writeMutex = false; // release lock
+	//	return *buf;
+	//} else {
 		//other process is busy, try again.
-	}
+	//}
 }
 
 int ImageGrabber::ReadImagesFromCamera(UINT32 readMutex_, UINT32 writeMutex_,
@@ -144,6 +154,9 @@ int ImageGrabber::ReadImagesFromCamera(UINT32 readMutex_, UINT32 writeMutex_,
 	// back up.
 
 	int counter = 2;
+	
+	int fd = 0;
+	fd = open ("/pipe/image", O_RDWR, 0);
 	while (1) {
 		char initialReadBuffer[kMaxPacketSize] = "";
 		char intermediateBuffer[1];
@@ -199,11 +212,14 @@ int ImageGrabber::ReadImagesFromCamera(UINT32 readMutex_, UINT32 writeMutex_,
 			remaining -= bytesThisRecv;
 		}
 		// Update image
-		if (&readMutex == false) { //TODO: check pointers 
-			*writeMutex = true; //take lock
-			memcpy(&sharedMem, &imgBuffer, sizeof(&imgBuffer));
-			*writeMutex = false; //release lock
-		}
+		//if (&readMutex == false) { //TODO: check pointers 
+		//	*writeMutex = true; //take lock
+		//	memcpy(&sharedMem, &imgBuffer, sizeof(&imgBuffer));
+		//	*writeMutex = false; //release lock
+		//}
+		if(fd != 0) write(fd, &imgBuffer, sizeof(&imgBuffer));
+		
+		
 	}
 }
 
