@@ -11,6 +11,8 @@
 #include "Vision/BinaryImage.h"
 #include <WPILib.h>
 #include "Math.h"
+#include "vxWorks.h"
+#include <pipeDrv.h>
 
 #define kMaxPacketSize 1536
 #define kImageBufferAllocationIncrement 1000
@@ -60,15 +62,13 @@ class ImageGrabber {
 		} else {
 			//TODO: set period to normal length
 			//risky much?
-			recvTask->Start(static_cast<UINT32> (readMutex),
-					static_cast<UINT32> (writeMutex),
-					static_cast<UINT32> (sharedImgBuff));
+			recvTask->Start();
 			//ReadImagesFromCamera();
 		}
-
+		return m_cameraSocket;
 	}
 
-	int ReadImagesFromCamera(UINT32, UINT32, UINT32);
+	int ReadImagesFromCamera();
 
 	int CreateCameraSocket(const char *requestString) {
 		m_ipAddress = inet_addr("10.16.22.11");
@@ -109,11 +109,9 @@ public:
 	ImageGrabber() {
 		recvTask = new Task(
 				"recvTask",
-				(FUNCPTR) this->ReadImagesFromCamera(
-						static_cast<UINT32> (readMutex),
-						static_cast<UINT32> (writeMutex),
-						static_cast<UINT32> (sharedImgBuff)));
-		namedVxPipe = pipeDevCreate("/pipe/image", 60, 1024);
+				(FUNCPTR) this->ReadImagesFromCamera());
+		pipeDrv();//initialize the pipe driver
+		namedVxPipe=pipeDevCreate("/pipe/image", 60, 1024);//create our device
 		pipeFd = open("/pipe/image", O_RDWR, 0);
 
 	}
@@ -139,11 +137,10 @@ char * ImageGrabber::GetRawImage() { //TODO: check pointers
 	//}
 }
 
-int ImageGrabber::ReadImagesFromCamera(UINT32 readMutex_, UINT32 writeMutex_,
-		UINT32 sharedMem_) {
-	bool* readMutex = static_cast<bool*> (readMutex_);
-	bool* writeMutex = static_cast<bool*> (writeMutex_);
-	char* sharedMem = static_cast<char*> (sharedMem_);
+int ImageGrabber::ReadImagesFromCamera() {
+	//bool* readMutex = static_cast<bool*> (readMutex_);
+	//bool* writeMutex = static_cast<bool*> (writeMutex_);
+	//char* sharedMem = static_cast<char*> (sharedMem_);
 	char *imgBuffer = NULL;
 	int imgBufferLength = 0;
 	//Infinite loop, task deletion handled by taskDeleteHook
@@ -217,7 +214,7 @@ int ImageGrabber::ReadImagesFromCamera(UINT32 readMutex_, UINT32 writeMutex_,
 		//	memcpy(&sharedMem, &imgBuffer, sizeof(&imgBuffer));
 		//	*writeMutex = false; //release lock
 		//}
-		if(fd != 0) write(fd, &imgBuffer, sizeof(&imgBuffer));
+		if(fd != 0) write(fd, imgBuffer, sizeof(imgBuffer));
 		
 		
 	}
