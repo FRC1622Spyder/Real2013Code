@@ -23,6 +23,14 @@ class Drive : public Spyder::Subsystem
 		Spyder::TwoIntConfig reverseBtn;
 		
 		Spyder::ConfigVar<float> curvature;
+		struct Control {
+			double xAdj;
+			double yAdj;
+			float dist;
+		};
+		Control *c_center;
+		Control *c_side;
+		int MidOutFd, SideOutFd;
 	public:
 		Drive() : Spyder::Subsystem("Drive"), leftJoystick("bind_leftDrive", 1, 2),
 			rightJoystick("bind_rightDrive", 2, 2), leftMotor("leftDriveMotor", 2),
@@ -31,18 +39,35 @@ class Drive : public Spyder::Subsystem
 			reversed(false), lastRevBtnVal(false), reverseBtn("bind_driveReverse", 2, 3),
 			curvature("drive_controlCurvature", 0.351563f)
 		{
+			c_center->dist=0;
+			c_center->yAdj=0;
+			c_center->xAdj=0;
+			c_side->dist=0;
+			c_side->yAdj=0;
+			c_side->xAdj=0;
 		}
 		
 		virtual ~Drive()
 		{
+			close(MidOutFd);
+			close(SideOutFd);
 		}
 		
 		virtual void Init(Spyder::RunModes runmode)
 		{
+			MidOutFd = open("/pipes/MidTargetOut", O_RDONLY, 0664);
+			SideOutFd = open("/pipes/SideTargetOut", O_RDONLY, 0664);
 		}
 		
 		virtual void Periodic(Spyder::RunModes runmode)
 		{
+			char buf[sizeof(struct Control)];
+			read(MidOutFd, buf, sizeof(buf));
+			c_center = (Control*)buf;
+			read(SideOutFd, buf, sizeof(buf));
+			c_side = (Control*)buf;
+			
+			
 			switch(runmode)
 			{
 				case Spyder::M_DISABLED:

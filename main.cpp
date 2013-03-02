@@ -4,13 +4,20 @@
 #include "Config.h"
 
 
+
 class RobotMain : public IterativeRobot
 {
 	private:
+	struct Control {
+			double xAdj;
+			double yAdj;
+			float dist;
+		};
 		unsigned int usPeriodCounter;
 	public:
 		virtual void RobotInit()
 		{
+			
 			std::fstream file;
 			file.open("config.cfg", std::ios_base::in);
 			if(file.is_open())

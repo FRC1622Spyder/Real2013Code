@@ -27,6 +27,12 @@ class Turret : public Spyder::Subsystem
 		Spyder::ConfigVar<UINT32> pistonSolenoidExt;
 		Spyder::ConfigVar<UINT32> pistonSolenoidRet;
 		Spyder::TwoIntConfig fireButton;
+		struct Control {
+			double xAdj;
+			double yAdj;
+			float dist;
+		};
+		Control c;
 	public:
 		Turret() : Spyder::Subsystem("Turret"), frontMotor("frontTurretMotor", 4),
 			backMotor("backTurretMotor", 3), turretJoystick("bind_turretSpeed", 3, 1),
@@ -37,6 +43,9 @@ class Turret : public Spyder::Subsystem
 			pistonSolenoidRet("turret_pistonSolenoidRet", 2),
 			fireButton("bind_turretFire", 3, 2)
 		{
+			c.dist=0;
+			c.xAdj=0;
+			c.yAdj=0;
 		}
 		
 		virtual ~Turret()
@@ -51,6 +60,7 @@ class Turret : public Spyder::Subsystem
 		
 		virtual void Periodic(Spyder::RunModes runmode)
 		{
+			
 			switch(runmode)
 			{
 				case Spyder::M_TELEOP:	

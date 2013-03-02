@@ -1,3 +1,4 @@
+#ifdef risk
 #include "Subsystem.h"
 #include "WPIObjMgr.h"
 #include "Config.h"
@@ -235,14 +236,14 @@ class Target : public Spyder::Subsystem
 	float relY;
 	time_t lastImage;
 	
-	RGBImage *image;
+	ColorImage *image;
 	
 public:
 	Target() : Spyder::Subsystem("Target")
 		{
 		ImageGrabber src; // will it segfault?
 		src.GetRawImage(); // will anything of use be here?
-		RGBImage *image = new RGBImage("init.png"); 
+		ColorImage *image = new RGBImage("init.png"); 
 		
 		}
 	virtual ~Target()
@@ -280,3 +281,4 @@ public:
 	
 };
 Target target;
+#endif
