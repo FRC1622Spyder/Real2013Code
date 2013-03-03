@@ -50,6 +50,7 @@ class Turret : public Spyder::Subsystem
 		
 		virtual ~Turret()
 		{
+			
 		}
 		
 		virtual void Init(Spyder::RunModes runmode)
