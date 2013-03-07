@@ -32,15 +32,7 @@ namespace Spyder
 	
 	ConfigVarBase::ConfigVarBase(const std::string &strName) 
 	{
-		ofstream log ("Config.log");
-		if(cfgvar_map.find(strName)!=cfgvar_map.end())
-		{
-			std::cout << "Key '" << strName << "' was requested but not found." << std::endl;
-			log << strName << "=" << std::endl;
-		} else {
-			cfgvar_map[strName] = this;
-		}
-		log.close();
+		cfgvar_map[strName] = this;
 	}
 	
 	TwoIntConfig::TwoIntConfig(const std::string &strName, int val1, int val2)
