@@ -15,7 +15,7 @@ class Pickup : public Spyder::Subsystem
 	Spyder::TwoIntConfig stick;
 public:
 	Pickup() : Spyder::Subsystem("Pickup"), ClampSol("pickup_close_sol",5), ReleaseSol("pickup_open_sol", 6),
-	cSol("bind_pickup_closeb", 3, 6), rSol("bind_pcikup_open", 3, 7), //FIXME: get appropreate button numbers
+	cSol("bind_pickup_close", 3, 6), rSol("bind_pickup_open", 3, 7), //FIXME: get appropreate button numbers
 	arm("pickup_arm_mot", 12), stick("bind_pickup_arm_axis", 3, 2)
 	{
 		
