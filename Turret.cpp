@@ -31,6 +31,8 @@ class Turret : public Spyder::Subsystem
 		Spyder::TwoIntConfig stopButton;
 		
 		unsigned char autoPhase;
+		
+		Spyder::TwoIntConfig presetButton;
 		double autoStart;
 	public:
 		Turret() : Spyder::Subsystem("Turret"), frontMotor("frontTurretMotor", 4),
@@ -40,7 +42,8 @@ class Turret : public Spyder::Subsystem
 			turretDown("bind_turretDown", 3, 8), angMotor("turret_angMotor", 5),
 			angSpeed("turret_angSpeed", 0.1), pistonSolenoidExt("turret_pistonSolenoidExt", 1),
 			pistonSolenoidRet("turret_pistonSolenoidRet", 2),
-			fireButton("bind_turretFire", 3, 2), stopButton("bind_turretStop", 3, 11)
+			fireButton("bind_turretFire", 3, 2), stopButton("bind_turretStop", 3, 11),
+			presetButton("bind_turretPreset", 3, 1)
 		{
 		}
 		
@@ -80,6 +83,11 @@ class Turret : public Spyder::Subsystem
 					if(val != 0.0f)
 					{
 						std::cout << "New turret speed: " << speed << std::endl;
+					}
+					
+					if(Spyder::GetJoystick(presetButton.GetVar(1))->GetRawButton(presetButton.GetVar(2)))
+					{
+						speed = 0.371167;
 					}
 					
 					if(Spyder::GetJoystick(stopButton.GetVar(1))->GetRawButton(stopButton.GetVar(2)))
