@@ -29,4 +29,14 @@ namespace Spyder
 		static ConfigVar<double> deadzone("controller_deadzone", 0.15);
 		return deadzone.GetVal();
 	}
+	
+	Solenoid* GetSolenoid(UINT32 channel)
+	{
+		static std::map<UINT32, Solenoid*> s_solenoids;
+		if(!s_solenoids[channel])
+		{
+			s_solenoids[channel] = new Solenoid(channel);
+		}
+		return s_solenoids[channel];
+	}
 }

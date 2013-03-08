@@ -2,7 +2,9 @@
 #include "Subsystem.h"
 #include <fstream>
 #include "Config.h"
+#include "WPIObjMgr.h"
 
+Compressor *compr = NULL;
 
 class RobotMain : public IterativeRobot
 {
@@ -25,10 +27,13 @@ class RobotMain : public IterativeRobot
 			{
 				subsystems[i]->RobotInit();
 			}
+			
+			compr = new Compressor(2, 3);
 		}
 		
 		virtual void DisabledInit()
 		{
+			compr->Stop();
 			std::vector<Spyder::Subsystem*> subsystems = Spyder::SubsystemMgr::GetSingleton()->GetSubsystems();
 			for(size_t i = 0; i < subsystems.size(); ++i)
 			{
@@ -47,6 +52,17 @@ class RobotMain : public IterativeRobot
 		
 		virtual void TeleopInit()
 		{
+			if(Spyder::GetJoystick(1)->GetRawButton(9))
+			{
+				std::fstream file;
+				file.open("config.cfg", std::ios_base::in);
+				if(file.is_open())
+				{
+					Spyder::ConfigVarBase::ReadConfigFile(file);
+					file.close();
+				}
+			}
+			compr->Start();
 			std::vector<Spyder::Subsystem*> subsystems = Spyder::SubsystemMgr::GetSingleton()->GetSubsystems();
 			for(size_t i = 0; i < subsystems.size(); ++i)
 			{

@@ -1,19 +1,25 @@
 #include "Config.h"
 #include <hash_map>
 #include <sstream>
-
+#include <iostream>
+#include <ostream>
 std::hash_map<std::string, Spyder::ConfigVarBase*> cfgvar_map;
 
 namespace Spyder
 {
 	void ConfigVarBase::ReadConfigFile(std::istream &file)
 	{
+		
 		std::string strLine;
 		while(!file.eof())
 		{
 			std::getline(file, strLine);
 	
 			size_t eqPos = strLine.find('=');
+			if(eqPos == std::string::npos)
+			{
+				std::cout << "WARNING:CONFIG: couldnt find '=' token in: \n" << strLine << std::endl;
+			}
 			std::string strName = strLine.substr(0, eqPos);
 			std::string strVal = strLine.substr(eqPos+1, strLine.size()-eqPos-1);
 			ConfigVarBase *var = cfgvar_map[strName.c_str()];
@@ -24,7 +30,7 @@ namespace Spyder
 		}
 	}
 	
-	ConfigVarBase::ConfigVarBase(const std::string &strName)
+	ConfigVarBase::ConfigVarBase(const std::string &strName) 
 	{
 		cfgvar_map[strName] = this;
 	}
@@ -38,7 +44,11 @@ namespace Spyder
 	{
 		std::stringstream var1;
 		std::stringstream var2;
-		size_t pSemicolon = dat.find(':');
+		size_t pSemicolon = dat.find(';');
+		if(pSemicolon == std::string::npos)
+		{
+			std::cout << "WARNING:CONFIG: couldnt find ';' token in: \n" << &dat <<std::endl;
+		}
 		var1 << dat.substr(0, pSemicolon);
 		var2 << dat.substr(pSemicolon+1, dat.size()-pSemicolon-1);
 		
