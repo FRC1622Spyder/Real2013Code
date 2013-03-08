@@ -29,6 +29,9 @@ class Turret : public Spyder::Subsystem
 		Spyder::ConfigVar<UINT32> pistonSolenoidRet;
 		Spyder::TwoIntConfig fireButton;
 		Spyder::TwoIntConfig stopButton;
+		
+		unsigned char autoPhase;
+		double autoStart;
 	public:
 		Turret() : Spyder::Subsystem("Turret"), frontMotor("frontTurretMotor", 4),
 			backMotor("backTurretMotor", 3), turretJoystick("bind_turretSpeed", 3, 1),
@@ -49,13 +52,25 @@ class Turret : public Spyder::Subsystem
 		{
 			Spyder::GetVictor(frontMotor.GetVal())->Set(0);
 			Spyder::GetVictor(backMotor.GetVal())->Set(0);
+			struct timespec tp;
+			switch(runmode)
+			{
+				case Spyder::M_AUTO:
+					autoPhase = 0;
+					clock_gettime(CLOCK_REALTIME, &tp);
+					autoStart = (double)tp.tv_sec + double(double(tp.tv_nsec)*1e-9);
+					break;
+				default:
+					break;
+			}
 		}
 		
 		virtual void Periodic(Spyder::RunModes runmode)
 		{
 			switch(runmode)
 			{
-				case Spyder::M_TELEOP:	
+				case Spyder::M_TELEOP:
+				{
 					Joystick *joystick = Spyder::GetJoystick(turretJoystick.GetVar(1));
 					float val = joystick->GetRawAxis(turretJoystick.GetVar(2)) * -1;
 					val = fabs(val) > Spyder::GetDeadzone() ? val : 0;
@@ -118,8 +133,55 @@ class Turret : public Spyder::Subsystem
 						Spyder::GetSolenoid(pistonSolenoidExt.GetVal())->Set(false);
 						Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(true);
 					}
-						
+				}
 					break;
+				case Spyder::M_AUTO:
+				{
+					if(frontInv.GetVal())
+					{
+						Spyder::GetVictor(frontMotor.GetVal())->Set(-0.371167);
+					}
+					else
+					{
+						Spyder::GetVictor(frontMotor.GetVal())->Set(0.371167);
+					}
+					if(backInv.GetVal())
+					{
+						Spyder::GetVictor(backMotor.GetVal())->Set(-0.371167);
+					}
+					else
+					{
+						Spyder::GetVictor(backMotor.GetVal())->Set(0.371167);
+					}
+					struct timespec tp;
+					clock_gettime(CLOCK_REALTIME, &tp);
+					double curTime = (double)tp.tv_sec + double(double(tp.tv_nsec)*1e-9);
+					double autoRunTime = curTime -  autoStart;
+					switch(autoPhase)
+					{
+						case 0:
+							if(autoRunTime >= 4.7)
+							{
+								++autoPhase;
+							}
+							break;
+						case 1:
+							Spyder::GetSolenoid(pistonSolenoidExt.GetVal())->Set(true);
+							Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(false);
+							if(autoRunTime >= 4.9)
+							{
+								++autoPhase;
+							}
+							break;
+						case 2:
+							Spyder::GetSolenoid(pistonSolenoidExt.GetVal())->Set(false);
+							Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(true);
+							autoPhase = 0;
+							autoStart = curTime;
+							break;
+					}
+					break;
+				}
 				default:
 					Spyder::GetVictor(frontMotor.GetVal())->Set(0);
 					Spyder::GetVictor(backMotor.GetVal())->Set(0);
