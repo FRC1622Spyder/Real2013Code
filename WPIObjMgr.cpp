@@ -35,7 +35,7 @@ namespace Spyder
 		static std::map<UINT32, Solenoid*> s_solenoids;
 		if(!s_solenoids[channel])
 		{
-			s_solenoids[channel] = new Solenoid(2, channel);
+			s_solenoids[channel] = new Solenoid(channel);
 		}
 		return s_solenoids[channel];
 	}
