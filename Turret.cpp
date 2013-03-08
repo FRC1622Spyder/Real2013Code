@@ -2,6 +2,7 @@
 #include "WPIObjMgr.h"
 #include "Config.h"
 #include <math.h>
+#include <iostream>
 
 class Turret : public Spyder::Subsystem
 {
@@ -27,6 +28,7 @@ class Turret : public Spyder::Subsystem
 		Spyder::ConfigVar<UINT32> pistonSolenoidExt;
 		Spyder::ConfigVar<UINT32> pistonSolenoidRet;
 		Spyder::TwoIntConfig fireButton;
+		Spyder::TwoIntConfig stopButton;
 	public:
 		Turret() : Spyder::Subsystem("Turret"), frontMotor("frontTurretMotor", 4),
 			backMotor("backTurretMotor", 3), turretJoystick("bind_turretSpeed", 3, 1),
@@ -35,7 +37,7 @@ class Turret : public Spyder::Subsystem
 			turretDown("bind_turretDown", 3, 8), angMotor("turret_angMotor", 5),
 			angSpeed("turret_angSpeed", 0.1), pistonSolenoidExt("turret_pistonSolenoidExt", 1),
 			pistonSolenoidRet("turret_pistonSolenoidRet", 2),
-			fireButton("bind_turretFire", 3, 2)
+			fireButton("bind_turretFire", 3, 2), stopButton("bind_turretStop", 3, 11)
 		{
 		}
 		
@@ -55,13 +57,25 @@ class Turret : public Spyder::Subsystem
 			{
 				case Spyder::M_TELEOP:	
 					Joystick *joystick = Spyder::GetJoystick(turretJoystick.GetVar(1));
-					float val = joystick->GetRawAxis(turretJoystick.GetVar(2)) * inputMul.GetVal();
+					float val = joystick->GetRawAxis(turretJoystick.GetVar(2)) * -1;
 					val = fabs(val) > Spyder::GetDeadzone() ? val : 0;
+					val *= inputMul.GetVal();
 					speed += val;
 					speed = (speed > 1.f) ? 1.f : speed;
+					if(val != 0.0f)
+					{
+						std::cout << "New turret speed: " << speed << std::endl;
+					}
 					
-					Spyder::GetVictor(frontMotor.GetVal())->Set(0);
-					Spyder::GetVictor(backMotor.GetVal())->Set(0);
+					if(Spyder::GetJoystick(stopButton.GetVar(1))->GetRawButton(stopButton.GetVar(2)))
+					{
+						speed = 0;
+					}
+					
+					if(speed < 0)
+					{
+						speed = 0;
+					}
 					
 					if(frontInv.GetVal())
 					{
