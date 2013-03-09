@@ -168,7 +168,7 @@ class Turret : public Spyder::Subsystem
 					switch(autoPhase)
 					{
 						case 0:
-							if(autoRunTime >= 4.7)
+							if(autoRunTime >= 4.5)
 							{
 								++autoPhase;
 							}
@@ -176,7 +176,7 @@ class Turret : public Spyder::Subsystem
 						case 1:
 							Spyder::GetSolenoid(pistonSolenoidExt.GetVal())->Set(true);
 							Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(false);
-							if(autoRunTime >= 4.9)
+							if(autoRunTime >= 4.7)
 							{
 								++autoPhase;
 							}
