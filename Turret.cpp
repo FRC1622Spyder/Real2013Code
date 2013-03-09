@@ -74,8 +74,8 @@ class Turret : public Spyder::Subsystem
 			{
 				case Spyder::M_TELEOP:
 				{
-					Joystick *joystick = Spyder::GetJoystick(turretJoystick.GetVar(1));
-					float val = joystick->GetRawAxis(turretJoystick.GetVar(2)) * -1;
+					Joystick *joystick = Spyder::GetJoystick(turretJoystick.GetVal1());
+					float val = joystick->GetRawAxis(turretJoystick.GetVal2()) * -1;
 					val = fabs(val) > Spyder::GetDeadzone() ? val : 0;
 					val *= inputMul.GetVal();
 					speed += val;
@@ -85,12 +85,12 @@ class Turret : public Spyder::Subsystem
 						std::cout << "New turret speed: " << speed << std::endl;
 					}
 					
-					if(Spyder::GetJoystick(presetButton.GetVar(1))->GetRawButton(presetButton.GetVar(2)))
+					if(Spyder::GetJoystick(presetButton.GetVal1())->GetRawButton(presetButton.GetVal2()))
 					{
 						speed = 0.371167;
 					}
 					
-					if(Spyder::GetJoystick(stopButton.GetVar(1))->GetRawButton(stopButton.GetVar(2)))
+					if(Spyder::GetJoystick(stopButton.GetVal1())->GetRawButton(stopButton.GetVal2()))
 					{
 						speed = 0;
 					}
@@ -118,11 +118,11 @@ class Turret : public Spyder::Subsystem
 						Spyder::GetVictor(backMotor.GetVal())->Set(speed);
 					}
 					
-					if(Spyder::GetJoystick(turretUp.GetVar(1))->GetRawButton(turretUp.GetVar(2)))
+					if(Spyder::GetJoystick(turretUp.GetVal1())->GetRawButton(turretUp.GetVal2()))
 					{
 						Spyder::GetVictor(angMotor.GetVal())->Set(angSpeed.GetVal());
 					}
-					else if(Spyder::GetJoystick(turretDown.GetVar(1))->GetRawButton(turretDown.GetVar(2)))
+					else if(Spyder::GetJoystick(turretDown.GetVal1())->GetRawButton(turretDown.GetVal2()))
 					{
 						Spyder::GetVictor(angMotor.GetVal())->Set(angSpeed.GetVal() * -1);
 					}
@@ -131,7 +131,7 @@ class Turret : public Spyder::Subsystem
 						Spyder::GetVictor(angMotor.GetVal())->Set(0);
 					}
 					
-					if(Spyder::GetJoystick(fireButton.GetVar(1))->GetRawButton(fireButton.GetVar(2)))
+					if(Spyder::GetJoystick(fireButton.GetVal1())->GetRawButton(fireButton.GetVal2()))
 					{
 						Spyder::GetSolenoid(pistonSolenoidExt.GetVal())->Set(true);
 						Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(false);

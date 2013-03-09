@@ -44,7 +44,8 @@ namespace Spyder
 			int m_val2;
 		public:
 			TwoIntConfig::TwoIntConfig(const std::string &strName, int val1, int val2);
-			int GetVar(const unsigned char val);
+			int GetVal1();
+			int GetVal2();
 		protected:
 			virtual void ReadVar(std::string &dat);
 	};

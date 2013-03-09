@@ -36,11 +36,11 @@ public:
 			break;
 		case Spyder::M_TELEOP:
 			
-			if(Spyder::GetJoystick(climbExt.GetVar(1))->GetRawButton(climbExt.GetVar(2))==true) {
+			if(Spyder::GetJoystick(climbExt.GetVal1())->GetRawButton(climbExt.GetVal2())==true) {
 				Spyder::GetSolenoid(ExtSol.GetVal())->Set(true);
 				Spyder::GetSolenoid(RetSol.GetVal())->Set(false);
 			}
-			else if(Spyder::GetJoystick(climbRet.GetVar(1))->GetRawButton(climbRet.GetVar(2))==true) {
+			else if(Spyder::GetJoystick(climbRet.GetVal1())->GetRawButton(climbRet.GetVal2())==true) {
 				Spyder::GetSolenoid(ExtSol.GetVal())->Set(false);
 				Spyder::GetSolenoid(RetSol.GetVal())->Set(true);
 			}

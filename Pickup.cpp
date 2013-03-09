@@ -43,13 +43,13 @@ public:
 			break;
 		case Spyder::M_TELEOP:
 			
-			Spyder::GetVictor(arm.GetVal())->Set(Spyder::GetJoystick(stick.GetVar(1))->GetRawAxis(stick.GetVar(2)));
+			Spyder::GetVictor(arm.GetVal())->Set(Spyder::GetJoystick(stick.GetVal1())->GetRawAxis(stick.GetVal2()));
 						
-			if(Spyder::GetJoystick(cSol.GetVar(1))->GetRawButton(cSol.GetVar(2))==true) {
+			if(Spyder::GetJoystick(cSol.GetVal1())->GetRawButton(cSol.GetVal2())==true) {
 				Spyder::GetSolenoid(ClampSol.GetVal())->Set(true);
 				Spyder::GetSolenoid(ReleaseSol.GetVal())->Set(false);
 			}
-			else if(Spyder::GetJoystick(rSol.GetVar(1))->GetRawButton(rSol.GetVar(2))==true) {
+			else if(Spyder::GetJoystick(rSol.GetVal1())->GetRawButton(rSol.GetVal2())==true) {
 				Spyder::GetSolenoid(ClampSol.GetVal())->Set(false);
 				Spyder::GetSolenoid(ReleaseSol.GetVal())->Set(true);
 			}

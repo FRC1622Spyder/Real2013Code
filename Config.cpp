@@ -59,19 +59,13 @@ namespace Spyder
 		var2 >> m_val2;
 	}
 	
-	int TwoIntConfig::GetVar(const unsigned char val)
+	int TwoIntConfig::GetVal1()
 	{
-		switch(val)
-		{
-			case 1:
-				return m_val1;
-				break;
-			case 2:
-				return m_val2;
-				break;
-			default:
-				return -1;
-				break;
-		}
+		return m_val1;
+	}
+	
+	int TwoIntConfig::GetVal2()
+	{
+		return m_val1;
 	}
 }

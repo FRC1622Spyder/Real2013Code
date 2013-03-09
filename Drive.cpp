@@ -50,10 +50,10 @@ class Drive : public Spyder::Subsystem
 					Spyder::GetVictor(rightMotor.GetVal())->Set(0);
 					break;
 				case Spyder::M_TELEOP:
-					Joystick *leftJoy = Spyder::GetJoystick(leftJoystick.GetVar(1));
-					Joystick *rightJoy = Spyder::GetJoystick(rightJoystick.GetVar(1));
-					float left = leftJoy->GetRawAxis(leftJoystick.GetVar(2));
-					float right = rightJoy->GetRawAxis(rightJoystick.GetVar(2));
+					Joystick *leftJoy = Spyder::GetJoystick(leftJoystick.GetVal1());
+					Joystick *rightJoy = Spyder::GetJoystick(rightJoystick.GetVal1());
+					float left = leftJoy->GetRawAxis(leftJoystick.GetVal2());
+					float right = rightJoy->GetRawAxis(rightJoystick.GetVal2());
 					left = fabs(left) > Spyder::GetDeadzone() ? left : 0;
 					right = fabs(right) > Spyder::GetDeadzone() ? right : 0;
 					
@@ -70,18 +70,18 @@ class Drive : public Spyder::Subsystem
 						right*= -1;
 					}
 					
-					if(Spyder::GetJoystick(halfSpeed.GetVar(1))->GetRawButton(halfSpeed.GetVar(2)))
+					if(Spyder::GetJoystick(halfSpeed.GetVal1())->GetRawButton(halfSpeed.GetVal2()))
 					{
 						left /= 2.f;
 						right /= 2.f;
 					}
 					
-					if(Spyder::GetJoystick(reverseBtn.GetVar(1))->GetRawButton(reverseBtn.GetVar(2)) && !lastRevBtnVal)
+					if(Spyder::GetJoystick(reverseBtn.GetVal1())->GetRawButton(reverseBtn.GetVal2()) && !lastRevBtnVal)
 					{
 						lastRevBtnVal = true;
 						reversed = !reversed;
 					}
-					lastRevBtnVal = Spyder::GetJoystick(reverseBtn.GetVar(1))->GetRawButton(reverseBtn.GetVar(2));
+					lastRevBtnVal = Spyder::GetJoystick(reverseBtn.GetVal1())->GetRawButton(reverseBtn.GetVal2());
 					
 					if(reversed)
 					{
