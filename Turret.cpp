@@ -1,6 +1,7 @@
 #include "Subsystem.h"
 #include "WPIObjMgr.h"
 #include "Config.h"
+#include "Console.h"
 #include <math.h>
 #include <iostream>
 
@@ -83,6 +84,9 @@ class Turret : public Spyder::Subsystem
 					if(val != 0.0f)
 					{
 						std::cout << "New turret speed: " << speed << std::endl;
+						Spyder::Packet p;
+						p.AddData(speed);
+						Spyder::Console::GetSingleton()->SendPacket("turr7et", p);	
 					}
 					
 					if(Spyder::GetJoystick(presetButton.GetVar(1))->GetRawButton(presetButton.GetVar(2)))
