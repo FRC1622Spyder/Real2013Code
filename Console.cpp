@@ -30,3 +30,8 @@ bool Spyder::Console::SendPacket(const std::string &strSubsystem, Packet& packet
 	return true;
 }
 
+Spyder::Console* Spyder::Console::GetSingleton()
+{
+	static Spyder::Console *c = new Console;
+	return c;
+}

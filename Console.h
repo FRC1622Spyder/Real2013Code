@@ -68,6 +68,7 @@ namespace Spyder
 		public:
 			Console();
 			~Console();
+			static Console* GetSingleton();
 			bool Connect(const std::string &strIP, unsigned short usPort);
 			bool SendPacket(const std::string &strSubsystem, Packet &packet);
 		private:

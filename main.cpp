@@ -3,6 +3,7 @@
 #include <fstream>
 #include "Config.h"
 #include "WPIObjMgr.h"
+#include "Console.h"
 
 Compressor *compr = NULL;
 
@@ -29,6 +30,8 @@ class RobotMain : public IterativeRobot
 			}
 			
 			compr = new Compressor(2, 3);
+			Spyder::Console *console = Spyder::Console::GetSingleton();
+			console->Connect("10.16.22.2", 1140);
 		}
 		
 		virtual void DisabledInit()
