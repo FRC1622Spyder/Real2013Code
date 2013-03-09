@@ -27,18 +27,17 @@ namespace Spyder
 			Packet() : strData()
 			{
 			}
-		
-			template<class T>
-			void AddData(T t)
-			{
-				strData += std::string((char*)(&t), sizeof(T));
-			}
 			
-			void AddData(char* t)
+			void AddData(const char* t)
 			{
 				unsigned int len = strlen(t);
 				strData += std::string((char*)(&len), sizeof(unsigned int));
 				strData += t;
+			}
+			
+			void AddData(char *t)
+			{
+				AddData((const char*)t);
 			}
 			
 			//Float packing this way is temp
@@ -50,6 +49,12 @@ namespace Spyder
 				std::stringstream ss;
 				ss << f;
 				AddData(ss.str().c_str());
+			}
+			
+			template<class T>
+			void AddData(T t)
+			{
+				strData += std::string((char*)(&t), sizeof(T));
 			}
 			
 			void AddData(char *t, unsigned int length)

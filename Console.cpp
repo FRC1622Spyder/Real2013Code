@@ -35,3 +35,10 @@ Spyder::Console* Spyder::Console::GetSingleton()
 	static Spyder::Console *c = new Console;
 	return c;
 }
+
+Spyder::Console::Console()
+{
+}
+Spyder::Console::~Console()
+{
+}
