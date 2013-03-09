@@ -14,3 +14,12 @@ bool Spyder::Console::Connect(std::string strIP, unsigned short usPort)
 	m_serverAddr.sin_addr.s_addr = inet_addr(const_cast<char*>(strIP.c_str()));// I'm so sorry for this
 	return true;
 }
+
+bool Spyder::Console::SendPacket(Packet& packet)
+{
+	if(sendto(m_socket, const_cast<char*>(packet.GetData().c_str()), packet.GetData().length(), 0, (sockaddr*)&m_serverAddr, m_serverAddr.sin_len) == -1)
+	{
+		return false;
+	}
+	return true;
+}

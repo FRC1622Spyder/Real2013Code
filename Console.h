@@ -44,6 +44,11 @@ namespace Spyder
 			{
 				strData += std::string(t, length);
 			}
+			
+			const std::string& GetData()
+			{
+				return strData;
+			}
 	};
 	
 	class Console
@@ -52,7 +57,7 @@ namespace Spyder
 			Console();
 			~Console();
 			bool Connect(std::string strIP, unsigned short usPort);
-			bool SendData(std::string strData);
+			bool SendPacket(Packet &packet);
 		private:
 			int m_socket;
 			struct sockaddr_in m_serverAddr;
