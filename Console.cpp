@@ -1,6 +1,7 @@
 #include "Console.h"
+#include <sstream>
 
-bool Spyder::Console::Connect(std::string strIP, unsigned short usPort)
+bool Spyder::Console::Connect(const std::string &strIP, unsigned short usPort)
 {
 	m_socket = socket(AF_INET, SOCK_DGRAM, 0);
 	if(m_socket == -1)
@@ -15,11 +16,17 @@ bool Spyder::Console::Connect(std::string strIP, unsigned short usPort)
 	return true;
 }
 
-bool Spyder::Console::SendPacket(Packet& packet)
+bool Spyder::Console::SendPacket(const std::string &strSubsystem, Packet& packet)
 {
-	if(sendto(m_socket, const_cast<char*>(packet.GetData().c_str()), packet.GetData().length(), 0, (sockaddr*)&m_serverAddr, m_serverAddr.sin_len) == -1)
+	std::stringstream ss;
+	int length = strSubsystem.length();
+	ss << std::string((char*)&length, 4);
+	ss << strSubsystem;
+	ss << packet.GetData();
+	if(sendto(m_socket, const_cast<char*>(ss.str().c_str()), ss.str().length(), 0, (sockaddr*)&m_serverAddr, m_serverAddr.sin_len) == -1)
 	{
 		return false;
 	}
 	return true;
 }
+

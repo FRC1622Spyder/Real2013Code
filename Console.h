@@ -56,8 +56,8 @@ namespace Spyder
 		public:
 			Console();
 			~Console();
-			bool Connect(std::string strIP, unsigned short usPort);
-			bool SendPacket(Packet &packet);
+			bool Connect(const std::string &strIP, unsigned short usPort);
+			bool SendPacket(const std::string &strSubsystem, Packet &packet);
 		private:
 			int m_socket;
 			struct sockaddr_in m_serverAddr;
