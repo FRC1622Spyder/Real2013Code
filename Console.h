@@ -15,6 +15,7 @@
 #include <strLib.h>
 #include <hostLib.h>
 #include <ioLib.h>
+#include <sstream>
 
 namespace Spyder
 {
@@ -38,6 +39,17 @@ namespace Spyder
 				unsigned int len = strlen(t);
 				strData += std::string((char*)(&len), sizeof(unsigned int));
 				strData += t;
+			}
+			
+			//Float packing this way is temp
+			//It's because the scripting language I'm
+			//Using can't unpack the floats
+			//The normal way
+			void AddData(float f)
+			{
+				std::stringstream ss;
+				ss << f;
+				AddData(ss.str().c_str());
 			}
 			
 			void AddData(char *t, unsigned int length)
