@@ -5,7 +5,7 @@
 #include <math.h>
 #include <iostream>
 
-class Turret : public Spyder::Subsystem
+class Turret : public Spyder::Subsystem, public PIDOutput, public PIDSource
 {
 	private:
 		Spyder::ConfigVar<UINT32> frontMotor;
@@ -50,6 +50,16 @@ class Turret : public Spyder::Subsystem
 		
 		virtual ~Turret()
 		{
+		}
+		
+		virtual void PIDWrite(float output)
+		{
+			speed += output;
+		}
+		
+		virtual double PIDGet()
+		{
+			return 0;
 		}
 		
 		virtual void Init(Spyder::RunModes runmode)
