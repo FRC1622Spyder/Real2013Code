@@ -5,6 +5,8 @@
 #include "WPIObjMgr.h"
 #include "Console.h"
 
+//#define PROFILE
+
 Compressor *compr = NULL;
 
 class RobotMain : public IterativeRobot
@@ -26,7 +28,18 @@ class RobotMain : public IterativeRobot
 			std::vector<Spyder::Subsystem*> subsystems = Spyder::SubsystemMgr::GetSingleton()->GetSubsystems();
 			for(size_t i = 0; i < subsystems.size(); ++i)
 			{
+				#ifdef PROFILE
+					timespec start;
+					clock_gettime(CLOCK_REALTIME, &start);
+				#endif
 				subsystems[i]->RobotInit();
+				#ifdef PROFILE
+					timespec end;
+					clock_gettime(CLOCK_REALTIME, &end);
+					std::cout << "Subsystem " << subsystems[i]->GetName() << " took "
+						<< end.tv_sec-start.tv_sec << "seconds and "
+						<< end.tv_nsec-start.tv_nsec << "nanoseconds during robot init" << std::endl;
+				#endif
 			}
 			
 			compr = new Compressor(2, 3);
@@ -40,7 +53,18 @@ class RobotMain : public IterativeRobot
 			std::vector<Spyder::Subsystem*> subsystems = Spyder::SubsystemMgr::GetSingleton()->GetSubsystems();
 			for(size_t i = 0; i < subsystems.size(); ++i)
 			{
+				#ifdef PROFILE
+					timespec start;
+					clock_gettime(CLOCK_REALTIME, &start);
+				#endif
 				subsystems[i]->Init(Spyder::M_DISABLED);
+				#ifdef PROFILE
+					timespec end;
+					clock_gettime(CLOCK_REALTIME, &end);
+					std::cout << "Subsystem " << subsystems[i]->GetName() << " took "
+						<< end.tv_sec-start.tv_sec << "seconds and "
+						<< end.tv_nsec-start.tv_nsec << "nanoseconds during disabled init" << std::endl;
+				#endif
 			}
 		}
 		
@@ -49,7 +73,18 @@ class RobotMain : public IterativeRobot
 			std::vector<Spyder::Subsystem*> subsystems = Spyder::SubsystemMgr::GetSingleton()->GetSubsystems();
 			for(size_t i = 0; i < subsystems.size(); ++i)
 			{
+				#ifdef PROFILE
+					timespec start;
+					clock_gettime(CLOCK_REALTIME, &start);
+				#endif
 				subsystems[i]->Init(Spyder::M_AUTO);
+				#ifdef PROFILE
+					timespec end;
+					clock_gettime(CLOCK_REALTIME, &end);
+					std::cout << "Subsystem " << subsystems[i]->GetName() << " took "
+						<< end.tv_sec-start.tv_sec << "seconds and "
+						<< end.tv_nsec-start.tv_nsec << "nanoseconds during auto init" << std::endl;
+				#endif
 			}
 		}
 		
@@ -69,7 +104,18 @@ class RobotMain : public IterativeRobot
 			std::vector<Spyder::Subsystem*> subsystems = Spyder::SubsystemMgr::GetSingleton()->GetSubsystems();
 			for(size_t i = 0; i < subsystems.size(); ++i)
 			{
+				#ifdef PROFILE
+					timespec start;
+					clock_gettime(CLOCK_REALTIME, &start);
+				#endif
 				subsystems[i]->Init(Spyder::M_TELEOP);
+				#ifdef PROFILE
+					timespec end;
+					clock_gettime(CLOCK_REALTIME, &end);
+					std::cout << "Subsystem " << subsystems[i]->GetName() << " took "
+						<< end.tv_sec-start.tv_sec << "seconds and "
+						<< end.tv_nsec-start.tv_nsec << "nanoseconds during teleop init" << std::endl;
+				#endif
 			}
 		}
 		
@@ -89,7 +135,18 @@ class RobotMain : public IterativeRobot
 			{
 				if(usPeriodCounter % subsystems[i]->GetPeriod() == 0)
 				{
+					#ifdef PROFILE
+						timespec start;
+						clock_gettime(CLOCK_REALTIME, &start);
+					#endif
 					subsystems[i]->Periodic(Spyder::M_DISABLED);
+					#ifdef PROFILE
+						timespec end;
+						clock_gettime(CLOCK_REALTIME, &end);
+						std::cout << "Subsystem " << subsystems[i]->GetName() << " took "
+							<< end.tv_sec-start.tv_sec << "seconds and "
+							<< end.tv_nsec-start.tv_nsec << "nanoseconds during disabled periodic" << std::endl;
+					#endif
 				}
 			}
 			++usPeriodCounter;
@@ -102,7 +159,18 @@ class RobotMain : public IterativeRobot
 			{
 				if(usPeriodCounter % subsystems[i]->GetPeriod() == 0)
 				{
+					#ifdef PROFILE
+						timespec start;
+						clock_gettime(CLOCK_REALTIME, &start);
+					#endif
 					subsystems[i]->Periodic(Spyder::M_AUTO);
+					#ifdef PROFILE
+						timespec end;
+						clock_gettime(CLOCK_REALTIME, &end);
+						std::cout << "Subsystem " << subsystems[i]->GetName() << " took "
+							<< end.tv_sec-start.tv_sec << "seconds and "
+							<< end.tv_nsec-start.tv_nsec << "nanoseconds during auto periodic" << std::endl;
+					#endif
 				}
 			}
 			++usPeriodCounter;
@@ -115,7 +183,18 @@ class RobotMain : public IterativeRobot
 			{
 				if(usPeriodCounter % subsystems[i]->GetPeriod() == 0)
 				{
+					#ifdef PROFILE
+						timespec start;
+						clock_gettime(CLOCK_REALTIME, &start);
+					#endif
 					subsystems[i]->Periodic(Spyder::M_TELEOP);
+					#ifdef PROFILE
+						timespec end;
+						clock_gettime(CLOCK_REALTIME, &end);
+						std::cout << "Subsystem " << subsystems[i]->GetName() << " took "
+							<< end.tv_sec-start.tv_sec << "seconds and "
+							<< end.tv_nsec-start.tv_nsec << "nanoseconds during teleop periodic" << std::endl;
+					#endif
 				}
 			}
 			++usPeriodCounter;
@@ -128,7 +207,18 @@ class RobotMain : public IterativeRobot
 			{
 				if(usPeriodCounter % subsystems[i]->GetPeriod() == 0)
 				{
+					#ifdef PROFILE
+						timespec start;
+						clock_gettime(CLOCK_REALTIME, &start);
+					#endif
 					subsystems[i]->Periodic(Spyder::M_TEST);
+					#ifdef PROFILE
+						timespec end;
+						clock_gettime(CLOCK_REALTIME, &end);
+						std::cout << "Subsystem " << subsystems[i]->GetName() << " took "
+							<< end.tv_sec-start.tv_sec << "seconds and "
+							<< end.tv_nsec-start.tv_nsec << "nanoseconds during test periodic" << std::endl;
+					#endif
 				}
 			}
 			++usPeriodCounter;
