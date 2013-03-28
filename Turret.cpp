@@ -29,12 +29,6 @@ class Turret : public Spyder::Subsystem
 		Spyder::ConfigVar<UINT32> pistonSolenoidExt;
 		Spyder::ConfigVar<UINT32> pistonSolenoidRet;
 		Spyder::TwoIntConfig fireButton;
-		struct Control {
-			double xAdj;
-			double yAdj;
-			float dist;
-		};
-		Control c;
 		Spyder::TwoIntConfig stopButton;
 		
 		unsigned char autoPhase;
@@ -52,9 +46,6 @@ class Turret : public Spyder::Subsystem
 			fireButton("bind_turretFire", 3, 2), stopButton("bind_turretStop", 3, 11),
 			presetButton("bind_turretPreset", 3, 1)
 		{
-			c.dist=0;
-			c.xAdj=0;
-			c.yAdj=0;
 		}
 		
 		virtual ~Turret()

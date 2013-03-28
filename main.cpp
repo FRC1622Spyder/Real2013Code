@@ -13,11 +13,6 @@ Compressor *compr = NULL;
 class RobotMain : public IterativeRobot
 {
 	private:
-	struct Control {
-			double xAdj;
-			double yAdj;
-			float dist;
-		};
 		unsigned int usPeriodCounter;
 	public:
 		virtual void RobotInit()
