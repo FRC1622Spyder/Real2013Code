@@ -35,6 +35,13 @@ class Turret : public Spyder::Subsystem, public PIDOutput, public PIDSource
 		
 		Spyder::TwoIntConfig presetButton;
 		double autoStart;
+		
+		Counter wheel1cntr;
+		Counter wheel2cntr;
+		timespec lastRead;
+		PIDController pid;
+		
+		double rpm;
 	public:
 		Turret() : Spyder::Subsystem("Turret"), frontMotor("frontTurretMotor", 4),
 			backMotor("backTurretMotor", 3), turretJoystick("bind_turretSpeed", 3, 1),
@@ -44,8 +51,14 @@ class Turret : public Spyder::Subsystem, public PIDOutput, public PIDSource
 			angSpeed("turret_angSpeed", 0.1), pistonSolenoidExt("turret_pistonSolenoidExt", 1),
 			pistonSolenoidRet("turret_pistonSolenoidRet", 2),
 			fireButton("bind_turretFire", 3, 2), stopButton("bind_turretStop", 3, 11),
-			presetButton("bind_turretPreset", 3, 1)
+			presetButton("bind_turretPreset", 3, 1), wheel1cntr(4), wheel2cntr(5),
+			pid(0, 0, 0, this, this), rpm(0)
 		{
+			lastRead.tv_nsec = 0;
+			lastRead.tv_sec = 0;
+			wheel1cntr.Start();
+			wheel2cntr.Start();
+			pid.Disable();
 		}
 		
 		virtual ~Turret()
@@ -59,7 +72,18 @@ class Turret : public Spyder::Subsystem, public PIDOutput, public PIDSource
 		
 		virtual double PIDGet()
 		{
-			return 0;
+			float time1 = lastRead.tv_sec;
+			time1 += float(lastRead.tv_nsec)*1e-9;
+			clock_gettime(CLOCK_REALTIME, &lastRead);
+			float time2 = lastRead.tv_sec;
+			time2 += float(lastRead.tv_nsec)*1e-9;
+			float time = time2-time1;
+			int revs = wheel1cntr.Get();
+			wheel1cntr.Reset();
+			double rpm = revs;
+			rpm *= time;
+			rpm /= 60.f;
+			return rpm;
 		}
 		
 		virtual void Init(Spyder::RunModes runmode)
@@ -81,19 +105,29 @@ class Turret : public Spyder::Subsystem, public PIDOutput, public PIDSource
 		
 		virtual void Periodic(Spyder::RunModes runmode)
 		{
+			pid.SetSetpoint(rpm);
 			switch(runmode)
 			{
 				case Spyder::M_TELEOP:
 				{
+					if(!pid.IsEnabled())
+						pid.Enable();
 					Joystick *joystick = Spyder::GetJoystick(turretJoystick.GetVar(1));
 					float val = joystick->GetRawAxis(turretJoystick.GetVar(2)) * -1;
 					val = fabs(val) > Spyder::GetDeadzone() ? val : 0;
-					val *= inputMul.GetVal();
-					speed += val;
-					speed = (speed > 1.f) ? 1.f : speed;
+					//val *= inputMul.GetVal();
+					rpm = Spyder::GetJoystick(1)->GetRawAxis(3);
+					rpm += 1;
+					rpm /= 2.0;
+					double p = Spyder::GetJoystick(2)->GetRawAxis(3);
+					p += 1;
+					p /= 2.0;
+					pid.SetPID(p, 0, 0);
+					//speed += val;
+					//speed = (speed > 1.f) ? 1.f : speed;
 					if(val != 0.0f)
 					{
-						std::cout << "New turret speed: " << speed << std::endl;
+						std::cout << "New turret speed: " << speed << ", Setpoint: " << rpm << ", P: " << p << std::endl;
 						Spyder::Packet p;
 						p.AddData(speed);
 						Spyder::Console::GetSingleton()->SendPacket("turr7et", p);	
@@ -159,6 +193,8 @@ class Turret : public Spyder::Subsystem, public PIDOutput, public PIDSource
 					break;
 				case Spyder::M_AUTO:
 				{
+					if(!pid.IsEnabled())
+						pid.Enable();
 					if(frontInv.GetVal())
 					{
 						Spyder::GetVictor(frontMotor.GetVal())->Set(-0.371167);
@@ -205,6 +241,7 @@ class Turret : public Spyder::Subsystem, public PIDOutput, public PIDSource
 					break;
 				}
 				default:
+					pid.Disable();
 					Spyder::GetVictor(frontMotor.GetVal())->Set(0);
 					Spyder::GetVictor(backMotor.GetVal())->Set(0);
 					Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(true);
