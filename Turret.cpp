@@ -175,12 +175,13 @@ class Turret : public Spyder::Subsystem
 							if(autoRunTime >= 7)
 							{
 								++autoPhase;
+								autoStart = curTime;
 							}
 							break;
 						case 1:
 							Spyder::GetSolenoid(pistonSolenoidExt.GetVal())->Set(true);
 							Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(false);
-							if(autoRunTime >= 7.2)
+							if(autoRunTime >= 0.7)
 							{
 								++autoPhase;
 							}
@@ -188,8 +189,11 @@ class Turret : public Spyder::Subsystem
 						case 2:
 							Spyder::GetSolenoid(pistonSolenoidExt.GetVal())->Set(false);
 							Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(true);
-							autoPhase = 0;
-							autoStart = curTime;
+							if(autoRunTime > 1.4)
+							{
+								autoPhase = 1;
+								autoStart = curTime;
+							}
 							break;
 					}
 					break;
