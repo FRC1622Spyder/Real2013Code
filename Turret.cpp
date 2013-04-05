@@ -81,13 +81,12 @@ class Turret : public Spyder::Subsystem
 					val *= inputMul.GetVal();
 					speed += val;
 					speed = (speed > 1.f) ? 1.f : speed;
-					if(val != 0.0f)
-					{
-						std::cout << "New turret speed: " << speed << std::endl;
-						Spyder::Packet p;
-						p.AddData(speed);
-						Spyder::Console::GetSingleton()->SendPacket("turr7et", p);	
-					}
+					
+					std::cout << "New turret speed: " << speed << std::endl;
+					Spyder::Packet p;
+					p.AddData<float>(speed);
+					Spyder::Console::GetSingleton()->SendPacket("turr7et", p);
+						
 					
 					if(Spyder::GetJoystick(presetButton.GetVar(1))->GetRawButton(presetButton.GetVar(2)))
 					{

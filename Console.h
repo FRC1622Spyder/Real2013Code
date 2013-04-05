@@ -40,17 +40,6 @@ namespace Spyder
 				AddData((const char*)t);
 			}
 			
-			//Float packing this way is temp
-			//It's because the scripting language I'm
-			//Using can't unpack the floats
-			//The normal way
-			void AddData(float f)
-			{
-				std::stringstream ss;
-				ss << f;
-				AddData(ss.str().c_str());
-			}
-			
 			template<class T>
 			void AddData(T t)
 			{
