@@ -39,4 +39,14 @@ namespace Spyder
 		}
 		return s_solenoids[channel];
 	}
+	
+	Counter* GetCounter(UINT32 channel)
+	{
+		static std::map<UINT32, Counter*> s_counters;
+		if(!s_counters[channel])
+		{
+			s_counters[channel] = new Counter(channel);
+		}
+		return s_counters[channel];
+	}
 }

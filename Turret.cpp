@@ -4,6 +4,47 @@
 #include "Console.h"
 #include <math.h>
 #include <iostream>
+#include <time.h>
+#include <vxworks.h>
+
+class RollAvg
+{
+	private:
+		std::vector<double> m_vals;
+		size_t pos;
+		size_t m_max;
+	public:
+		RollAvg(unsigned int n) : m_vals(n), pos(0), m_max(0)
+		{
+		}
+		
+		double Get()
+		{
+			double val = 0;
+			for(size_t i = 0; i < m_max; ++i)
+			{
+				val += m_vals[i];
+			}
+			if(m_max == 0)
+				return 0;
+			return val/double(m_max);
+		}
+		
+		void Add(double val)
+		{
+			size_t absMax = m_vals.size();
+			if(pos > absMax)
+			{
+				pos = 0;
+				m_max = absMax;
+			}
+			else if(m_max < absMax)
+			{
+				m_max = pos;
+			}
+			m_vals[pos++] = val;
+		}
+};
 
 class Turret : public Spyder::Subsystem
 {
@@ -35,6 +76,15 @@ class Turret : public Spyder::Subsystem
 		
 		Spyder::TwoIntConfig presetButton;
 		double autoStart;
+		
+		Spyder::ConfigVar<UINT32> frontCounterChannel;
+		Spyder::ConfigVar<UINT32> backCounterChannel;
+		
+		RollAvg rpmFront;
+		RollAvg rpmBack;
+		
+		double lastRPMReadFront;
+		double lastRPMReadBack;
 	public:
 		Turret() : Spyder::Subsystem("Turret"), frontMotor("frontTurretMotor", 4),
 			backMotor("backTurretMotor", 3), turretJoystick("bind_turretSpeed", 3, 1),
@@ -44,7 +94,9 @@ class Turret : public Spyder::Subsystem
 			angSpeed("turret_angSpeed", 0.1), pistonSolenoidExt("turret_pistonSolenoidExt", 1),
 			pistonSolenoidRet("turret_pistonSolenoidRet", 2),
 			fireButton("bind_turretFire", 3, 2), stopButton("bind_turretStop", 3, 11),
-			presetButton("bind_turretPreset", 3, 1)
+			presetButton("bind_turretPreset", 3, 1), frontCounterChannel("turret_frontCounter", 4),
+			backCounterChannel("turret_backCounter", 5), rpmFront(10), rpmBack(10), lastRPMReadFront(0.0),
+			lastRPMReadBack(0.0)
 		{
 		}
 		
@@ -71,6 +123,22 @@ class Turret : public Spyder::Subsystem
 		
 		virtual void Periodic(Spyder::RunModes runmode)
 		{
+			Counter *fWheel = Spyder::GetCounter(frontCounterChannel.GetVal());
+			INT32 temp = fWheel->Get();
+			timespec readTime;
+			clock_gettime(CLOCK_REALTIME, &readTime);
+			fWheel->Reset();
+			double secs = readTime.tv_sec;
+			secs += readTime.tv_nsec * 1e-9;
+			double rpm = temp;
+			rpm *= secs;
+			rpm /= 60;
+			rpmFront.Add(rpm);
+			
+			Spyder::Packet p;
+			p.AddData<float>(speed);
+			p.AddData<float>(rpmFront.Get());
+			Spyder::Console::GetSingleton()->SendPacket("turr7et", p);
 			switch(runmode)
 			{
 				case Spyder::M_TELEOP:
@@ -81,12 +149,6 @@ class Turret : public Spyder::Subsystem
 					val *= inputMul.GetVal();
 					speed += val;
 					speed = (speed > 1.f) ? 1.f : speed;
-					
-					std::cout << "New turret speed: " << speed << std::endl;
-					Spyder::Packet p;
-					p.AddData<float>(speed);
-					Spyder::Console::GetSingleton()->SendPacket("turr7et", p);
-						
 					
 					if(Spyder::GetJoystick(presetButton.GetVar(1))->GetRawButton(presetButton.GetVar(2)))
 					{
