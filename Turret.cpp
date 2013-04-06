@@ -94,8 +94,8 @@ class Turret : public Spyder::Subsystem
 			angSpeed("turret_angSpeed", 0.1), pistonSolenoidExt("turret_pistonSolenoidExt", 1),
 			pistonSolenoidRet("turret_pistonSolenoidRet", 2),
 			fireButton("bind_turretFire", 3, 2), stopButton("bind_turretStop", 3, 11),
-			presetButton("bind_turretPreset", 3, 1), frontCounterChannel("turret_frontCounter", 4),
-			backCounterChannel("turret_backCounter", 5), rpmFront(10), rpmBack(10), lastRPMReadFront(0.0),
+			presetButton("bind_turretPreset", 3, 1), frontCounterChannel("turret_frontCounter", 3),
+			backCounterChannel("turret_backCounter", 4), rpmFront(10), rpmBack(10), lastRPMReadFront(0.0),
 			lastRPMReadBack(0.0)
 		{
 		}
