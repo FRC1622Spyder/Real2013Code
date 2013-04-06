@@ -142,9 +142,10 @@ class Turret : public Spyder::Subsystem
 						clock_gettime(CLOCK_REALTIME, &theTimespec);
 						double theTime = theTimespec.tv_sec;
 						theTime += theTimespec.tv_nsec*1e-9;
-						theTime -= lastPistonChange;
-						if(theTime >= 0.7f)
+						double timediff = theTime - lastPistonChange;
+						if(timediff >= 0.7f)
 						{
+							lastPistonChange = theTime;
 							isPistonOut = !isPistonOut;
 						}
 					}
