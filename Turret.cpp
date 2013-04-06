@@ -1,6 +1,7 @@
 #include "Subsystem.h"
 #include "WPIObjMgr.h"
 #include "Config.h"
+#include "Console.h"
 #include <math.h>
 #include <iostream>
 
@@ -80,10 +81,12 @@ class Turret : public Spyder::Subsystem
 					val *= inputMul.GetVal();
 					speed += val;
 					speed = (speed > 1.f) ? 1.f : speed;
-					if(val != 0.0f)
-					{
-						std::cout << "New turret speed: " << speed << std::endl;
-					}
+					
+					std::cout << "New turret speed: " << speed << std::endl;
+					Spyder::Packet p;
+					p.AddData<float>(speed);
+					Spyder::Console::GetSingleton()->SendPacket("turr7et", p);
+						
 					
 					if(Spyder::GetJoystick(presetButton.GetVal1())->GetRawButton(presetButton.GetVal2()))
 					{
@@ -168,15 +171,16 @@ class Turret : public Spyder::Subsystem
 					switch(autoPhase)
 					{
 						case 0:
-							if(autoRunTime >= 4.7)
+							if(autoRunTime >= 7)
 							{
 								++autoPhase;
+								autoStart = curTime;
 							}
 							break;
 						case 1:
 							Spyder::GetSolenoid(pistonSolenoidExt.GetVal())->Set(true);
 							Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(false);
-							if(autoRunTime >= 4.9)
+							if(autoRunTime >= 0.7)
 							{
 								++autoPhase;
 							}
@@ -184,8 +188,11 @@ class Turret : public Spyder::Subsystem
 						case 2:
 							Spyder::GetSolenoid(pistonSolenoidExt.GetVal())->Set(false);
 							Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(true);
-							autoPhase = 0;
-							autoStart = curTime;
+							if(autoRunTime > 1.4)
+							{
+								autoPhase = 1;
+								autoStart = curTime;
+							}
 							break;
 					}
 					break;
