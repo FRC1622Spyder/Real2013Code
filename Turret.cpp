@@ -85,6 +85,9 @@ class Turret : public Spyder::Subsystem
 		
 		double lastRPMReadFront;
 		double lastRPMReadBack;
+
+		bool isPistonOut;
+		double lastPistonChange;
 	public:
 		Turret() : Spyder::Subsystem("Turret"), frontMotor("frontTurretMotor", 4),
 			backMotor("backTurretMotor", 3), turretJoystick("bind_turretSpeed", 3, 1),
@@ -96,7 +99,7 @@ class Turret : public Spyder::Subsystem
 			fireButton("bind_turretFire", 3, 2), stopButton("bind_turretStop", 3, 11),
 			presetButton("bind_turretPreset", 3, 1), frontCounterChannel("turret_frontCounter", 3),
 			backCounterChannel("turret_backCounter", 4), rpmFront(10), rpmBack(10), lastRPMReadFront(0.0),
-			lastRPMReadBack(0.0)
+			lastRPMReadBack(0.0), isPistonOut(true), lastPistonChange(0.0)
 		{
 		}
 		
@@ -197,6 +200,20 @@ class Turret : public Spyder::Subsystem
 					}
 					
 					if(Spyder::GetJoystick(fireButton.GetVar(1))->GetRawButton(fireButton.GetVar(2)))
+					{
+						timespec theTimespec;
+						clock_gettime(CLOCK_REALTIME, &theTimespec);
+						double theTime = theTimespec.tv_sec;
+						theTime += theTimespec.tv_nsec*1e-9;
+						double timediff = theTime - lastPistonChange;
+						if(timediff >= 0.7f)
+						{
+							lastPistonChange = theTime;
+							isPistonOut = !isPistonOut;
+						}
+					}
+					
+					if(isPistonOut)
 					{
 						Spyder::GetSolenoid(pistonSolenoidExt.GetVal())->Set(true);
 						Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(false);
