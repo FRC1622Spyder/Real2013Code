@@ -35,6 +35,8 @@ class Turret : public Spyder::Subsystem
 		
 		Spyder::TwoIntConfig presetButton;
 		double autoStart;
+		bool isPistonOut;
+		double lastPistonChange;
 	public:
 		Turret() : Spyder::Subsystem("Turret"), frontMotor("frontTurretMotor", 4),
 			backMotor("backTurretMotor", 3), turretJoystick("bind_turretSpeed", 3, 1),
@@ -44,7 +46,7 @@ class Turret : public Spyder::Subsystem
 			angSpeed("turret_angSpeed", 0.1), pistonSolenoidExt("turret_pistonSolenoidExt", 1),
 			pistonSolenoidRet("turret_pistonSolenoidRet", 2),
 			fireButton("bind_turretFire", 3, 2), stopButton("bind_turretStop", 3, 11),
-			presetButton("bind_turretPreset", 3, 1)
+			presetButton("bind_turretPreset", 3, 1), isPistonOut(true), lastPistonChange(0.0)
 		{
 		}
 		
@@ -135,6 +137,19 @@ class Turret : public Spyder::Subsystem
 					}
 					
 					if(Spyder::GetJoystick(fireButton.GetVar(1))->GetRawButton(fireButton.GetVar(2)))
+					{
+						timespec theTimespec;
+						clock_gettime(CLOCK_REALTIME, &theTimespec);
+						double theTime = theTimespec.tv_sec;
+						theTime += theTimespec.tv_nsec*1e-9;
+						theTime -= lastPistonChange;
+						if(theTime >= 0.7f)
+						{
+							isPistonOut = !isPistonOut;
+						}
+					}
+					
+					if(isPistonOut)
 					{
 						Spyder::GetSolenoid(pistonSolenoidExt.GetVal())->Set(true);
 						Spyder::GetSolenoid(pistonSolenoidRet.GetVal())->Set(false);
