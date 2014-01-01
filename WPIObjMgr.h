@@ -1,4 +1,5 @@
 #pragma once
+#define PATH_MAX 255
 #include <WPILib.h>
 
 namespace Spyder

@@ -1,3 +1,4 @@
+#define PATH_MAX 255
 #include "WPILib.h"
 #include "Subsystem.h"
 #include <fstream>

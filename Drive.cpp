@@ -43,6 +43,11 @@ class Drive : public Spyder::Subsystem
 		
 		virtual void Periodic(Spyder::RunModes runmode)
 		{
+		float curve = 0.0f;
+		float right = 0.0f;
+		float left  = 0.0f;
+		Joystick *leftJoy = Spyder::GetJoystick(leftJoystick.GetVar(1));
+		Joystick *rightJoy = Spyder::GetJoystick(rightJoystick.GetVar(1));
 			switch(runmode)
 			{
 				case Spyder::M_DISABLED:
@@ -50,14 +55,14 @@ class Drive : public Spyder::Subsystem
 					Spyder::GetVictor(rightMotor.GetVal())->Set(0);
 					break;
 				case Spyder::M_TELEOP:
-					Joystick *leftJoy = Spyder::GetJoystick(leftJoystick.GetVar(1));
-					Joystick *rightJoy = Spyder::GetJoystick(rightJoystick.GetVar(1));
-					float left = leftJoy->GetRawAxis(leftJoystick.GetVar(2));
-					float right = rightJoy->GetRawAxis(rightJoystick.GetVar(2));
+					//Joystick *leftJoy = Spyder::GetJoystick(leftJoystick.GetVar(1));
+					//Joystick *rightJoy = Spyder::GetJoystick(rightJoystick.GetVar(1));
+					left = leftJoy->GetRawAxis(leftJoystick.GetVar(2));
+					right = rightJoy->GetRawAxis(rightJoystick.GetVar(2));
 					left = fabs(left) > Spyder::GetDeadzone() ? left : 0;
 					right = fabs(right) > Spyder::GetDeadzone() ? right : 0;
 					
-					float curve = curvature.GetVal();
+					curve = curvature.GetVal();
 					left = ((left*left*left)*curve) + (left*(1.f-curve));
 					right = ((right*right*right)*curve) + (right*(1.f-curve));
 					

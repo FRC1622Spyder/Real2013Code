@@ -1,4 +1,5 @@
 #pragma once
+#define PATH_MAX 255
 #include <string>
 #include <sys/socket.h> //oh god, vxworks, why
 #include <stdio.h>
@@ -16,7 +17,6 @@
 #include <hostLib.h>
 #include <ioLib.h>
 #include <sstream>
-
 namespace Spyder
 {
 	class Packet
